@@ -129,6 +129,10 @@ namespace ZebraFileManager.Zebra
 
         public virtual void SetFileContents(string path, byte[] contents)
         {
+            if(Regex.IsMatch(path, "\\s"))
+            {
+                throw new ArgumentException("Path on Zebra may not contain spaces.");
+            }
             var header = $@"! CISDFCRC16
 0000
 {path}
