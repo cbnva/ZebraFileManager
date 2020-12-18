@@ -8,6 +8,8 @@ I'm probably not going to fix problems I'm not having, but you're more than welc
 
 I wrote this as an internal tool for work, and it does what I need.
 
+There are basically no error checks, comments, or good coding practices. Again, feel free to improve it.
+
 ## Features ##
 - Connects over IP (LAN/WLAN) to port 9100
 - Drag/drop files to/from printer
