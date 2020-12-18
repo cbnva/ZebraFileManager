@@ -25,15 +25,15 @@ namespace ZebraFileManager.Zebra
             bool reset = string.IsNullOrEmpty(rootDirectory);
             if (reset)
             {
-                command = @"{}{""file.dir"":null}";
+                command = @"! U1 do ""file.dir"" """"
+";
             }
             else
             {
-                command = $@"{{}}{{""file.dir"":""{rootDirectory[0]}:""}}";
+                command = $@"! U1 do ""file.dir"" ""{rootDirectory[0]}:""
+";
             }
-            var result = this.RunCommand(command);
-            var o = (JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-            var value = o["file.dir"].Value<string>();
+            var value = this.RunCommand(command);
 
             var filesRegex = new Regex(@"^\*\s+(?<FileName>\S+)\s+(?<Size>\d+)(?:\s+(?<Attribute>\w))*", RegexOptions.Compiled | RegexOptions.Multiline);
             var drivesRegex = new Regex(@"^-\s*(?<free>\d+) bytes free (?<letter>[A-Za-z]):\s+(?<name>.+)$", RegexOptions.Compiled | RegexOptions.Multiline);
@@ -120,11 +120,10 @@ namespace ZebraFileManager.Zebra
 
         public virtual byte[] GetFileContents(string path)
         {
-            var result = this.RunCommand($@"{{}}{{""file.type"":""{path}""}}");
-            var o = (JContainer)Newtonsoft.Json.JsonConvert.DeserializeObject(result);
-            var value = o["file.type"].Value<string>();
+            var result = this.RunCommand(Encoding.UTF8.GetBytes($@"! U1 do ""file.type"" ""{path}""
+"));
 
-            return Encoding.UTF8.GetBytes(value);
+            return result;
         }
 
         public virtual void SetFileContents(string path, byte[] contents)
