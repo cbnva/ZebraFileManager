@@ -176,12 +176,12 @@ namespace ZebraFileManager
 
         private void listView1_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent("FileNameW") && treeView1.SelectedNode.Tag is Drive && treeView1.SelectedNode.Parent.Tag is Printer)
+            if (e.Data.GetDataPresent("FileDrop") && treeView1.SelectedNode.Tag is Drive && treeView1.SelectedNode.Parent.Tag is Printer)
             {
                 var drive = treeView1.SelectedNode.Tag as Drive;
                 var printer = treeView1.SelectedNode.Parent.Tag as Printer;
                 // User dropped a file (or multiple)
-                var filenames = e.Data.GetData("FileNameW") as string[];
+                var filenames = e.Data.GetData("FileDrop") as string[];
                 foreach (var file in filenames)
                 {
                     var targetName = $"{drive.Letter}:{Path.GetFileName(file)}";
