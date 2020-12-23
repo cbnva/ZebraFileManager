@@ -26,14 +26,34 @@ namespace ZebraFileManager
 
             lvwColumnSorter = new ListViewColumnSorter();
             this.listView1.ListViewItemSorter = lvwColumnSorter;
+            RefreshBTPorts();
+            RefreshUSBPorts();
+        }
 
-            var ports = RJCP.IO.Ports.SerialPortStream.GetPortDescriptions().Where(x => !x.Description.ToLower().StartsWith("standard serial over bluetooth link")).ToList();
-            ports.AddRange(GetBTPorts());
+        private void RefreshBTPorts()
+        {
+            ThreadPool.QueueUserWorkItem(y =>
+            {
+                var ports = RJCP.IO.Ports.SerialPortStream.GetPortDescriptions().Where(x => !x.Description.ToLower().StartsWith("standard serial over bluetooth link")).ToList();
+                ports.AddRange(GetBTPorts());
+                Invoke(new Action<List<PortDescription>>(x =>
+                {
+                    comboBox1.DisplayMember = "Description";
+                    comboBox1.DataSource = x;
+                }), ports);
+            });
+        }
+        private void RefreshUSBPorts()
+        {
+            ThreadPool.QueueUserWorkItem(y =>
+            {
+                var ports = USBPrinter.GetUSBPrinterPorts();
 
-            cbUSB.DataSource = USBPrinter.GetUSBPrinterPorts();
-
-            comboBox1.DisplayMember = "Description";
-            comboBox1.DataSource = ports;
+                Invoke(new Action<List<string>>(x =>
+                {
+                    cbUSB.DataSource = x;
+                }), ports);
+            });
         }
 
         List<PortDescription> GetBTPorts()
@@ -368,6 +388,16 @@ namespace ZebraFileManager
             printer.Dispose();
             treeView1.Nodes.Remove(node);
 
+        }
+
+        private void btnRefreshUSB_Click(object sender, EventArgs e)
+        {
+            RefreshUSBPorts();
+        }
+
+        private void btnRefreshBT_Click(object sender, EventArgs e)
+        {
+            RefreshBTPorts();
         }
     }
 }

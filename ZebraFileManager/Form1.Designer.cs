@@ -51,6 +51,8 @@
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.factoryResetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnRefreshBT = new System.Windows.Forms.Button();
+            this.btnRefreshUSB = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -186,10 +188,11 @@
             // 
             this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(73, 43);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(284, 21);
+            this.comboBox1.Size = new System.Drawing.Size(255, 21);
             this.comboBox1.TabIndex = 6;
             // 
             // btnAddBT
@@ -236,10 +239,11 @@
             // 
             this.cbUSB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbUSB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUSB.FormattingEnabled = true;
             this.cbUSB.Location = new System.Drawing.Point(73, 72);
             this.cbUSB.Name = "cbUSB";
-            this.cbUSB.Size = new System.Drawing.Size(284, 21);
+            this.cbUSB.Size = new System.Drawing.Size(255, 21);
             this.cbUSB.TabIndex = 6;
             // 
             // ctxPrinter
@@ -249,26 +253,48 @@
             this.toolStripSeparator1,
             this.factoryResetToolStripMenuItem});
             this.ctxPrinter.Name = "ctxPrinter";
-            this.ctxPrinter.Size = new System.Drawing.Size(181, 76);
+            this.ctxPrinter.Size = new System.Drawing.Size(154, 54);
             // 
             // removeToolStripMenuItem
             // 
             this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(150, 6);
             // 
             // factoryResetToolStripMenuItem
             // 
             this.factoryResetToolStripMenuItem.Name = "factoryResetToolStripMenuItem";
-            this.factoryResetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.factoryResetToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.factoryResetToolStripMenuItem.Text = "Factory Reset...";
             this.factoryResetToolStripMenuItem.Click += new System.EventHandler(this.factoryResetToolStripMenuItem_Click);
+            // 
+            // btnRefreshBT
+            // 
+            this.btnRefreshBT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshBT.Image = global::ZebraFileManager.Properties.Resources.Refresh;
+            this.btnRefreshBT.Location = new System.Drawing.Point(334, 41);
+            this.btnRefreshBT.Name = "btnRefreshBT";
+            this.btnRefreshBT.Size = new System.Drawing.Size(23, 23);
+            this.btnRefreshBT.TabIndex = 3;
+            this.btnRefreshBT.UseVisualStyleBackColor = true;
+            this.btnRefreshBT.Click += new System.EventHandler(this.btnRefreshBT_Click);
+            // 
+            // btnRefreshUSB
+            // 
+            this.btnRefreshUSB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshUSB.Image = global::ZebraFileManager.Properties.Resources.Refresh;
+            this.btnRefreshUSB.Location = new System.Drawing.Point(334, 70);
+            this.btnRefreshUSB.Name = "btnRefreshUSB";
+            this.btnRefreshUSB.Size = new System.Drawing.Size(23, 23);
+            this.btnRefreshUSB.TabIndex = 3;
+            this.btnRefreshUSB.UseVisualStyleBackColor = true;
+            this.btnRefreshUSB.Click += new System.EventHandler(this.btnRefreshUSB_Click);
             // 
             // Form1
             // 
@@ -281,6 +307,8 @@
             this.Controls.Add(this.txtIP);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnRefresh);
+            this.Controls.Add(this.btnRefreshBT);
+            this.Controls.Add(this.btnRefreshUSB);
             this.Controls.Add(this.btnAddUSBPrinter);
             this.Controls.Add(this.btnAddBT);
             this.Controls.Add(this.btnAddPrinterByIP);
@@ -288,7 +316,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "5";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -323,6 +351,8 @@
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem factoryResetToolStripMenuItem;
+        private System.Windows.Forms.Button btnRefreshUSB;
+        private System.Windows.Forms.Button btnRefreshBT;
     }
 }
 
