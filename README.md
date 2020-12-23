@@ -12,9 +12,10 @@ There are basically no error checks, comments, or good coding practices. Again, 
 
 ## Features ##
 - Connects over IP (LAN/WLAN) to port 9100
+- USB connection
+  - No Zebra driver required. Interfaces directly with USB Printing Support.
 - Drag/drop files to/from printer
 - Rename Files
 - Delete Files
-
-## Future Plans ##
-- USB connection
+- "Factory Reset"
+  - Deletes all files on E: drive and changes settings back to default.
