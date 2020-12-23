@@ -31,15 +31,8 @@ namespace ZebraFileManager
                     return;
                 }
 
-                var results = printer.RunCommand("{}{\"allconfig\":null}");
-                var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject(results) as Newtonsoft.Json.Linq.JObject;
-                var settings = new List<Setting>();
-                foreach (JProperty token in parsed["allconfig"]?.Children())
-                {
-                    var setting = token.First.ToObject<Setting>();
-                    setting.Name = token.Name;
-                    settings.Add(setting);
-                }
+                var settings = printer.GetSettings();
+
                 Invoke(new Action(() => dataGridView1.DataSource = settings));
             }));
         }
