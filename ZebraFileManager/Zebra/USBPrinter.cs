@@ -125,9 +125,25 @@ namespace ZebraFileManager.Zebra
                     return null;
                 }
             }
-            catch(Win32Exception ex)
+            catch (Win32Exception ex)
             {
                 throw new InvalidOperationException("Unable to connect to the printer.", ex);
+            }
+            catch (IOException ex)
+            {
+                throw new InvalidOperationException("Printer was disconnected.", ex);
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException is IOException)
+                {
+                    throw new InvalidOperationException("Printer was disconnected.", ex.InnerException);
+
+                }
+                else
+                {
+                    throw new InvalidOperationException("Printer connection problem.", ex.InnerException);
+                }
             }
         }
 

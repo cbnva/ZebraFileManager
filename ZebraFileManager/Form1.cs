@@ -122,8 +122,15 @@ namespace ZebraFileManager
 
                 if (p.Connected || p.Connect())
                 {
-                    var fs = p.GetFileSystem(drive);
-                    this.Invoke((Action<TreeNode, FileSystem>)EndRefreshPrinterNode, node, p.LastFileSystemResults);
+                    try
+                    {
+                        var fs = p.GetFileSystem(drive);
+                        this.Invoke((Action<TreeNode, FileSystem>)EndRefreshPrinterNode, node, p.LastFileSystemResults);
+                    }
+                    catch (Exception ex)
+                    {
+                        Invoke(new Action<Exception>(z => MessageBox.Show(z.Message)), ex);
+                    }
                 }
             }, node);
         }
