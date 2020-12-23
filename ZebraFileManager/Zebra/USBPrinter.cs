@@ -33,7 +33,7 @@ namespace ZebraFileManager.Zebra
             return Encoding.UTF8.GetString(RunCommand(Encoding.UTF8.GetBytes(command), response));
         }
 
-        object commandLock = new object();
+        static Dictionary<string, object> LockObjects = new Dictionary<string, object>();
 
         public override byte[] RunCommand(byte[] command, bool response = true)
         {
@@ -42,7 +42,13 @@ namespace ZebraFileManager.Zebra
             {
                 throw new InvalidOperationException("Not connected.");
             }
-            lock (commandLock)
+            if (!LockObjects.ContainsKey(PrinterName))
+                LockObjects.Add(PrinterName, new object());
+
+            object lockObject = LockObjects[PrinterName];
+
+
+            lock (lockObject)
             {
                 using (var sh = OpenUSBPrinterPort(PrinterName))
                 {
