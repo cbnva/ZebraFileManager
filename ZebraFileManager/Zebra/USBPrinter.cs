@@ -30,7 +30,10 @@ namespace ZebraFileManager.Zebra
 
         public override string RunCommand(string command, bool response = true)
         {
-            return Encoding.UTF8.GetString(RunCommand(Encoding.UTF8.GetBytes(command), response));
+            var result = RunCommand(Encoding.UTF8.GetBytes(command), response);
+            if (result != null)
+                return Encoding.UTF8.GetString(result);
+            return null;
         }
 
         static Dictionary<string, object> LockObjects = new Dictionary<string, object>();
