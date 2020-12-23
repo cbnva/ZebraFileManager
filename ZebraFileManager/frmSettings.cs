@@ -25,7 +25,8 @@ namespace ZebraFileManager
 
         private void BeginReloadSettings()
         {
-            ThreadPool.QueueUserWorkItem(new WaitCallback(x => {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+            {
                 if (!printer.Connect())
                 {
                     return;
@@ -44,22 +45,61 @@ namespace ZebraFileManager
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-           
+
         }
 
         private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            
+
         }
 
         private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            
+
         }
 
         private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
         {
-            var row = dataGridView1.Rows[e.RowIndex];
+            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+            {
+                var row = dataGridView1.Rows[i];
+
+                var setting = row.DataBoundItem as Setting;
+                if (setting != null)
+                {
+                    var oldCell = row.Cells[valueDataGridViewTextBoxColumn.Index];
+                    DataGridViewCell newCell = null;
+                    switch (setting.Type)
+                    {
+                        case SettingType.Enum:
+                            newCell = new DataGridViewComboBoxCell()
+                            {
+                                DataSource = setting.Range.Split(',')
+                            };
+                            break;
+                        case SettingType.Bool:
+                            newCell = new DataGridViewCheckBoxCell();
+                            break;
+                        case SettingType.Integer:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        case SettingType.IPV4_Address:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        case SettingType.Double:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        default:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                    }
+                    if (newCell != null)
+                    {
+                        row.Cells[valueDataGridViewTextBoxColumn.Index] = newCell;
+                    }
+                    row.Cells[valueDataGridViewTextBoxColumn.Index].ReadOnly = setting.Access == SettingAccess.R;
+                }
+            }
 
         }
     }

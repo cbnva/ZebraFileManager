@@ -16,6 +16,25 @@ namespace ZebraFileManager.Zebra
 
         public string Value { get; set; }
 
+        [JsonIgnore]
+        public object DisplayValue
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case SettingType.Bool:
+                        var val = Value?.Trim()?.ToLower();
+                        return val == "on";
+                    default:
+                        return Value;
+                }
+            }
+            set { 
+            
+            }
+        }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public SettingType Type { get; set; }
 
