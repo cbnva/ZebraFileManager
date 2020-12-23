@@ -15,10 +15,19 @@ There are basically no error checks, comments, or good coding practices. Again, 
 - USB connection
   - No Zebra driver required. Interfaces directly with USB Printing Support.
 - Drag/drop files to/from printer
-- Rename Files
-- Delete Files
+- Rename/Delete Files
 - "Factory Reset"
   - Deletes all files on E: drive and changes settings back to default.
+  
+## Planned ##
+- Change settings
+- Run ZPL/CPCL scripts
+- Generate settings change script
+  
+## Coding ##
+- Only references a few NuGet packages; no Zebra dependencies
+- Could be used via powershell
+  - `[System.Reflection.Assembly]::LoadFile($path)`
 
 ## Screenshots ##
 ![Main Form](/../screenshots/MainForm.png?raw=true "Main Form")
