@@ -332,5 +332,42 @@ namespace ZebraFileManager
 
 
         }
+
+
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && e.Node.Tag is Printer)
+            {
+                ctxPrinter.Tag = e.Node.Tag;
+                ctxPrinter.Show(treeView1, e.X, e.Y);
+            }
+        }
+
+        private void factoryResetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var node = treeView1.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag == ctxPrinter.Tag);
+            if (node == null)
+                return;
+
+            var printer = ctxPrinter.Tag as Printer;
+            if (printer != null && MessageBox.Show("Are you sure you want to factory reset this printer?", "Reset", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                printer.FactoryReset();
+            }
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            var node = treeView1.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag == ctxPrinter.Tag);
+            if (node == null)
+                return;
+
+            var printer = ctxPrinter.Tag as Printer;
+            printer.Dispose();
+            treeView1.Nodes.Remove(node);
+
+        }
     }
 }

@@ -128,7 +128,7 @@ namespace ZebraFileManager.Zebra
 
         public virtual void SetFileContents(string path, byte[] contents)
         {
-            if(Regex.IsMatch(path, "\\s"))
+            if (Regex.IsMatch(path, "\\s"))
             {
                 throw new ArgumentException("Path on Zebra may not contain spaces.");
             }
@@ -178,6 +178,76 @@ namespace ZebraFileManager.Zebra
 
         }
 
+        public virtual List<Setting> GetSettings()
+        {
+            var results = RunCommand("{}{\"allconfig\":null}");
+            var parsed = Newtonsoft.Json.JsonConvert.DeserializeObject(results) as Newtonsoft.Json.Linq.JObject;
+            var settings = new List<Setting>();
+            foreach (JProperty token in parsed["allconfig"]?.Children())
+            {
+                var setting = token.First.ToObject<Setting>();
+                setting.Name = token.Name;
+                settings.Add(setting);
+            }
+            return settings;
+        }
+
+        public virtual string GetSettingSGD(string settingName)
+        {
+            var results = RunCommand($"! U1 getvar \"{settingName}\"\r\n");
+
+            return results;
+
+        }
+
+        public virtual string SetSettingSGD(string settingName, string value)
+        {
+            var results = RunCommand($"! U1 setvar \"{settingName}\" \"{value}\"\r\n", false);
+
+            return results;
+
+        }
+
+        //public virtual 
+
+        public virtual void FactoryReset()
+        {
+            // Delete files on E drive
+            var fs = GetFileSystem("E:", false);
+            foreach (var item in fs.FileSystemEntries)
+            {
+                DeleteFile(item.Path);
+            }
+
+            // Ensure that we're not in Line Print Mode, which disables JSON
+            var languageMode = GetSettingSGD("device.languages");
+            if (languageMode == "\"line_print\"")
+            {
+                SetSettingSGD("device.languages", "zpl");
+            }
+
+
+            // Generate a script to change all settings back to defaults, excluding time and odometer settings.
+            var settings = GetSettings().Where(x => x.Access == SettingAccess.RW);
+
+            var sb = new StringBuilder("! U ");
+            foreach (var setting in settings)
+            {
+                if (setting.Name.StartsWith("rtc.") || setting.Name.StartsWith("odometer."))
+                    continue;
+                if (setting.Value != setting.Default)
+                    sb.AppendLine($"setvar \"{setting.Name}\" \"{setting.Default}\"");
+            }
+            sb.AppendLine("END ");
+
+            var results = RunCommand("! U1 do \"device.restore_defaults\" \"power\"\r\n", false); 
+            results = RunCommand(sb.ToString(), false);
+
+
+            results = RunCommand("! U1 do \"device.reset\" \"\" \r\n", false);
+
+
+        }
 
         public abstract void Dispose();
     }

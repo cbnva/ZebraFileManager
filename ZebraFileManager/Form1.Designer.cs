@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.listView1 = new System.Windows.Forms.ListView();
             this.hdrName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hdrSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -46,10 +47,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.cbUSB = new System.Windows.Forms.ComboBox();
+            this.ctxPrinter = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.factoryResetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.ctxPrinter.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
@@ -104,6 +110,7 @@
             this.treeView1.Size = new System.Drawing.Size(311, 335);
             this.treeView1.TabIndex = 1;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
             // label1
             // 
@@ -235,6 +242,34 @@
             this.cbUSB.Size = new System.Drawing.Size(284, 21);
             this.cbUSB.TabIndex = 6;
             // 
+            // ctxPrinter
+            // 
+            this.ctxPrinter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.factoryResetToolStripMenuItem});
+            this.ctxPrinter.Name = "ctxPrinter";
+            this.ctxPrinter.Size = new System.Drawing.Size(181, 76);
+            // 
+            // removeToolStripMenuItem
+            // 
+            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            this.removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeToolStripMenuItem.Text = "Remove";
+            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // factoryResetToolStripMenuItem
+            // 
+            this.factoryResetToolStripMenuItem.Name = "factoryResetToolStripMenuItem";
+            this.factoryResetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.factoryResetToolStripMenuItem.Text = "Factory Reset...";
+            this.factoryResetToolStripMenuItem.Click += new System.EventHandler(this.factoryResetToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,6 +293,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.ctxPrinter.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -283,6 +319,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cbUSB;
+        private System.Windows.Forms.ContextMenuStrip ctxPrinter;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem factoryResetToolStripMenuItem;
     }
 }
 
