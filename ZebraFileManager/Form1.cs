@@ -30,7 +30,7 @@ namespace ZebraFileManager
             var ports = RJCP.IO.Ports.SerialPortStream.GetPortDescriptions().Where(x => !x.Description.ToLower().StartsWith("standard serial over bluetooth link")).ToList();
             ports.AddRange(GetBTPorts());
 
-            cbUSB.DataSource = USBPrinter2.UsbPrinterResolver.GetUSBPrinterPorts();
+            cbUSB.DataSource = USBPrinter.GetUSBPrinterPorts();
 
             comboBox1.DisplayMember = "Description";
             comboBox1.DataSource = ports;
@@ -318,18 +318,12 @@ namespace ZebraFileManager
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            var p = new USBPrinter2();
-            p.PrinterName = "ZDesigner QLn320 (ZPL)";
-            var node = new TreeNode(p.PrinterName);
-            node.Tag = p;
-            treeView1.Nodes.Add(node);
-            BeginRefreshPrinterNode(node);
 
         }
 
         private void btnAddUSBPrinter_Click(object sender, EventArgs e)
         {
-            var p = new USBPrinter2();
+            var p = new USBPrinter();
             p.PrinterName = cbUSB.SelectedItem as string;
             var node = new TreeNode(p.PrinterName);
             node.Tag = p;
