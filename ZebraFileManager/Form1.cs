@@ -11,6 +11,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using File = ZebraFileManager.Zebra.File;
+using Microsoft.Win32;
+using RJCP.IO.Ports;
+using System.Text.RegularExpressions;
 
 namespace ZebraFileManager
 {
@@ -23,6 +26,61 @@ namespace ZebraFileManager
 
             lvwColumnSorter = new ListViewColumnSorter();
             this.listView1.ListViewItemSorter = lvwColumnSorter;
+
+            var ports = RJCP.IO.Ports.SerialPortStream.GetPortDescriptions().Where(x => !x.Description.ToLower().StartsWith("standard serial over bluetooth link")).ToList();
+            ports.AddRange(GetBTPorts());
+
+            cbUSB.DataSource = USBPrinter2.UsbPrinterResolver.GetUSBPrinterPorts();
+
+            comboBox1.DisplayMember = "Description";
+            comboBox1.DataSource = ports;
+        }
+
+        List<PortDescription> GetBTPorts()
+        {
+            var ports = new List<PortDescription>();
+            var regex = new Regex(@"^[a-fA-F0-9]&[a-fA-F0-9]{8}&[a-fA-F0-9]&(?<MAC>[a-fA-F0-9]{12})_[a-fA-F0-9]+$", RegexOptions.Compiled);
+            using (var bthenum = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Enum\\BTHENUM"))
+            {
+                var keynames = bthenum.GetSubKeyNames();
+                foreach (var btDeviceName in keynames.Where(x => x.StartsWith("{00001101-0000-1000-8000-00805f9b34fb}")))
+                {
+                    using (var btDevKey = bthenum.OpenSubKey(btDeviceName)) // BTHENUM\{GUID}*
+                    {
+                        foreach (var subkeyName in btDevKey.GetSubKeyNames().Where(x => regex.IsMatch(x) && keynames.Contains($"Dev_{regex.Match(x).Groups["MAC"].Value}")))
+                        {
+                            using (var devParam = btDevKey.OpenSubKey(subkeyName + "\\Device Parameters")) // BTHENUM\{GUID}*\aeouaoeu\Device Parameters
+                            {
+                                var portName = devParam.GetValue("PortName") as string;
+
+                                if (string.IsNullOrEmpty(portName))
+                                    continue;
+
+                                var mac = regex.Match(subkeyName).Groups["MAC"].Value;
+                                using (var rawDevKey = bthenum.OpenSubKey($"Dev_{mac}"))
+                                {
+                                    var name = rawDevKey.GetSubKeyNames().Where(x => x.ToUpper().EndsWith(mac.ToUpper())).FirstOrDefault();
+                                    if (!string.IsNullOrEmpty(name))
+                                    {
+                                        using (var rawDevSubKey = rawDevKey.OpenSubKey(name))
+                                        {
+                                            var friendlyName = rawDevSubKey.GetValue("FriendlyName") as string;
+                                            if (!string.IsNullOrEmpty(friendlyName))
+                                            {
+                                                ports.Add(new PortDescription(portName, $"{portName} - {friendlyName} - {mac}"));
+                                            }
+                                        }
+                                    }
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            return ports;
         }
 
         private void btnAddPrinterByIP_Click(object sender, EventArgs e)
@@ -152,7 +210,8 @@ namespace ZebraFileManager
                 files.Add((e.Item as ListViewItem).Tag as File);
             }
 
-            ThreadPool.QueueUserWorkItem(new WaitCallback(x => {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+            {
                 var tempDir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
                 Directory.CreateDirectory(tempDir);
                 var tempFiles = new List<string>();
@@ -231,5 +290,53 @@ namespace ZebraFileManager
             }
         }
 
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            var printer = treeView1.SelectedNode?.Tag as Printer ?? treeView1.SelectedNode?.Parent?.Tag as Printer;
+
+            if (printer != null)
+            {
+                using (var frm = new frmSettings(printer))
+                    frm.ShowDialog();
+            }
+        }
+
+        private void btnAddBT_Click(object sender, EventArgs e)
+        {
+            var port = comboBox1.SelectedValue as PortDescription;
+            if (port != null)
+            {
+
+                var p = new SerialPrinter();
+                p.ComPort = port.Port;
+                var node = new TreeNode(port.Description);
+                node.Tag = p;
+                treeView1.Nodes.Add(node);
+                BeginRefreshPrinterNode(node);
+            }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            var p = new USBPrinter2();
+            p.PrinterName = "ZDesigner QLn320 (ZPL)";
+            var node = new TreeNode(p.PrinterName);
+            node.Tag = p;
+            treeView1.Nodes.Add(node);
+            BeginRefreshPrinterNode(node);
+
+        }
+
+        private void btnAddUSBPrinter_Click(object sender, EventArgs e)
+        {
+            var p = new USBPrinter2();
+            p.PrinterName = cbUSB.SelectedItem as string;
+            var node = new TreeNode(p.PrinterName);
+            node.Tag = p;
+            treeView1.Nodes.Add(node);
+            BeginRefreshPrinterNode(node);
+
+
+        }
     }
 }
