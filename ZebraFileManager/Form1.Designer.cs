@@ -125,8 +125,7 @@
             // 
             // btnAddPrinterByIP
             // 
-            this.btnAddPrinterByIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddPrinterByIP.Location = new System.Drawing.Point(363, 12);
+            this.btnAddPrinterByIP.Location = new System.Drawing.Point(475, 12);
             this.btnAddPrinterByIP.Name = "btnAddPrinterByIP";
             this.btnAddPrinterByIP.Size = new System.Drawing.Size(121, 23);
             this.btnAddPrinterByIP.TabIndex = 3;
@@ -136,11 +135,9 @@
             // 
             // txtIP
             // 
-            this.txtIP.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtIP.Location = new System.Drawing.Point(73, 14);
             this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(284, 20);
+            this.txtIP.Size = new System.Drawing.Size(396, 20);
             this.txtIP.TabIndex = 4;
             // 
             // splitContainer1
@@ -186,19 +183,16 @@
             // 
             // comboBox1
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(73, 43);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(255, 21);
+            this.comboBox1.Size = new System.Drawing.Size(367, 21);
             this.comboBox1.TabIndex = 6;
             // 
             // btnAddBT
             // 
-            this.btnAddBT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddBT.Location = new System.Drawing.Point(363, 41);
+            this.btnAddBT.Location = new System.Drawing.Point(475, 41);
             this.btnAddBT.Name = "btnAddBT";
             this.btnAddBT.Size = new System.Drawing.Size(121, 23);
             this.btnAddBT.TabIndex = 3;
@@ -208,8 +202,7 @@
             // 
             // btnAddUSBPrinter
             // 
-            this.btnAddUSBPrinter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddUSBPrinter.Location = new System.Drawing.Point(363, 70);
+            this.btnAddUSBPrinter.Location = new System.Drawing.Point(475, 70);
             this.btnAddUSBPrinter.Name = "btnAddUSBPrinter";
             this.btnAddUSBPrinter.Size = new System.Drawing.Size(121, 23);
             this.btnAddUSBPrinter.TabIndex = 3;
@@ -237,13 +230,11 @@
             // 
             // cbUSB
             // 
-            this.cbUSB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.cbUSB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbUSB.FormattingEnabled = true;
             this.cbUSB.Location = new System.Drawing.Point(73, 72);
             this.cbUSB.Name = "cbUSB";
-            this.cbUSB.Size = new System.Drawing.Size(255, 21);
+            this.cbUSB.Size = new System.Drawing.Size(367, 21);
             this.cbUSB.TabIndex = 6;
             // 
             // ctxPrinter
@@ -276,9 +267,8 @@
             // 
             // btnRefreshBT
             // 
-            this.btnRefreshBT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshBT.Image = global::ZebraFileManager.Properties.Resources.Refresh;
-            this.btnRefreshBT.Location = new System.Drawing.Point(334, 41);
+            this.btnRefreshBT.Location = new System.Drawing.Point(446, 41);
             this.btnRefreshBT.Name = "btnRefreshBT";
             this.btnRefreshBT.Size = new System.Drawing.Size(23, 23);
             this.btnRefreshBT.TabIndex = 3;
@@ -287,9 +277,8 @@
             // 
             // btnRefreshUSB
             // 
-            this.btnRefreshUSB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshUSB.Image = global::ZebraFileManager.Properties.Resources.Refresh;
-            this.btnRefreshUSB.Location = new System.Drawing.Point(334, 70);
+            this.btnRefreshUSB.Location = new System.Drawing.Point(446, 70);
             this.btnRefreshUSB.Name = "btnRefreshUSB";
             this.btnRefreshUSB.Size = new System.Drawing.Size(23, 23);
             this.btnRefreshUSB.TabIndex = 3;
@@ -316,7 +305,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "Form1";
-            this.Text = "5";
+            this.Text = "Zebra File Manager";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
