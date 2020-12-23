@@ -19,3 +19,6 @@ There are basically no error checks, comments, or good coding practices. Again, 
 - Delete Files
 - "Factory Reset"
   - Deletes all files on E: drive and changes settings back to default.
+
+## Screenshots ##
+![Main Form](/../screenshots/MainForm.png?raw=true "Main Form")
