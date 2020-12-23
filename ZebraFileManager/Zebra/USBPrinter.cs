@@ -104,6 +104,12 @@ namespace ZebraFileManager.Zebra
             }
         }
 
+        public override void Dispose()
+        {
+            // RunCommand releases all resources each time it's run, so nothing to do here.
+        }
+
+
         [Flags]
         private enum ThreadAccess : int
         {

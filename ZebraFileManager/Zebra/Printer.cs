@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ZebraFileManager.Zebra
 {
-    public abstract class Printer
+    public abstract class Printer : IDisposable
     {
         public abstract bool Connect();
         public abstract string RunCommand(string command, bool response = true);
@@ -177,5 +177,8 @@ namespace ZebraFileManager.Zebra
             var value = o["file.rename"].Value<string>();
 
         }
+
+
+        public abstract void Dispose();
     }
 }

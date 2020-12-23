@@ -52,7 +52,7 @@ namespace ZebraFileManager.Zebra
                     {
                         int read;
                         socket.ReceiveTimeout = 5000;
-                        
+
                         try
                         {
                             while ((read = socket.Receive(buffer)) > 0)
@@ -70,6 +70,14 @@ namespace ZebraFileManager.Zebra
                     }
                 }
                 return null;
+            }
+        }
+
+        public override void Dispose()
+        {
+            if (socket?.Connected == true)
+            {
+                socket.Dispose();
             }
         }
     }

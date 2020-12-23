@@ -73,5 +73,13 @@ namespace ZebraFileManager.Zebra
                 return null;
             }
         }
+
+        public override void Dispose()
+        {
+            if(port?.IsDisposed == false)
+            {
+                port.Dispose();
+            }
+        }
     }
 }
