@@ -59,6 +59,7 @@ namespace ZebraFileManager.Zebra
                     {
                         var timeout = 20000;
                         var buffer = new byte[4096];
+                        var quitSync = new ManualResetEvent(true);
 
                         while (true)
                         {
@@ -67,9 +68,16 @@ namespace ZebraFileManager.Zebra
                             var t = Task.Run(() =>
                             {
                                 ioThread = GetCurrentThreadId();
-                                var read = f.Read(buffer, 0, buffer.Length);
-                                if (read != 0 && ms.CanWrite)
-                                    ms.Write(buffer, 0, read);
+                                try
+                                {
+                                    var read = f.Read(buffer, 0, buffer.Length);
+                                    if (read != 0 && ms.CanWrite)
+                                        ms.Write(buffer, 0, read);
+                                }
+                                finally
+                                {
+                                    quitSync.Set();
+                                }
                             });
 
 
@@ -83,6 +91,7 @@ namespace ZebraFileManager.Zebra
                                     {
                                         tHandle = OpenThread(ThreadAccess.All, false, ioThread);
                                         r = CancelSynchronousIo(tHandle);
+                                        quitSync.Reset();
                                     }
                                     finally
                                     {
@@ -95,7 +104,9 @@ namespace ZebraFileManager.Zebra
                             timeout = 200;
 
                         }
+
                         sh.Close();
+                        quitSync.WaitOne();
                         return ms.ToArray();
 
                     }
