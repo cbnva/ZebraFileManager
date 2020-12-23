@@ -74,7 +74,6 @@
     <Compile Include="Zebra\File.cs" />
     <Compile Include="Zebra\FileSystem.cs" />
     <Compile Include="Zebra\USBPrinter2.cs" />
-    <Compile Include="Zebra\USBPrinter.cs" />
     <Compile Include="Zebra\SerialPrinter.cs" />
     <Compile Include="Zebra\IPPrinter.cs" />
     <Compile Include="Zebra\Printer.cs" />
