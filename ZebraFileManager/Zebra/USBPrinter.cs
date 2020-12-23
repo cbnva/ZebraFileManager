@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -50,77 +51,83 @@ namespace ZebraFileManager.Zebra
 
             object lockObject = LockObjects[PrinterName];
 
-
-            lock (lockObject)
+            try
             {
-                using (var sh = OpenUSBPrinterPort(PrinterName))
-                {
-                    using (var f = new System.IO.FileStream(sh, System.IO.FileAccess.ReadWrite))
-                    {
-                        f.Write(command, 0, command.Length);
-                    }
-                }
-                if (response)
+                lock (lockObject)
                 {
                     using (var sh = OpenUSBPrinterPort(PrinterName))
-                    using (var f = new System.IO.FileStream(sh, System.IO.FileAccess.ReadWrite))
-                    using (var ms = new MemoryStream())
                     {
-                        var timeout = 20000;
-                        var buffer = new byte[4096];
-                        var quitSync = new ManualResetEvent(true);
-
-                        while (true)
+                        using (var f = new System.IO.FileStream(sh, System.IO.FileAccess.ReadWrite))
                         {
+                            f.Write(command, 0, command.Length);
+                        }
+                    }
+                    if (response)
+                    {
+                        using (var sh = OpenUSBPrinterPort(PrinterName))
+                        using (var f = new System.IO.FileStream(sh, System.IO.FileAccess.ReadWrite))
+                        using (var ms = new MemoryStream())
+                        {
+                            var timeout = 20000;
+                            var buffer = new byte[4096];
+                            var quitSync = new ManualResetEvent(true);
 
-                            uint ioThread = 0;
-                            var t = Task.Run(() =>
+                            while (true)
                             {
-                                ioThread = GetCurrentThreadId();
-                                try
-                                {
-                                    var read = f.Read(buffer, 0, buffer.Length);
-                                    if (read != 0 && ms.CanWrite)
-                                        ms.Write(buffer, 0, read);
-                                }
-                                finally
-                                {
-                                    quitSync.Set();
-                                }
-                            });
 
-
-                            if (!t.Wait(timeout))
-                            {
-                                int r = 0;
-                                if (ioThread != 0)
+                                uint ioThread = 0;
+                                var t = Task.Run(() =>
                                 {
-                                    IntPtr tHandle = IntPtr.Zero;
+                                    ioThread = GetCurrentThreadId();
                                     try
                                     {
-                                        tHandle = OpenThread(ThreadAccess.All, false, ioThread);
-                                        r = CancelSynchronousIo(tHandle);
-                                        quitSync.Reset();
+                                        var read = f.Read(buffer, 0, buffer.Length);
+                                        if (read != 0 && ms.CanWrite)
+                                            ms.Write(buffer, 0, read);
                                     }
                                     finally
                                     {
-                                        if (tHandle != IntPtr.Zero)
-                                            CloseHandle(tHandle);
+                                        quitSync.Set();
                                     }
+                                });
+
+
+                                if (!t.Wait(timeout))
+                                {
+                                    int r = 0;
+                                    if (ioThread != 0)
+                                    {
+                                        IntPtr tHandle = IntPtr.Zero;
+                                        try
+                                        {
+                                            tHandle = OpenThread(ThreadAccess.All, false, ioThread);
+                                            r = CancelSynchronousIo(tHandle);
+                                            quitSync.Reset();
+                                        }
+                                        finally
+                                        {
+                                            if (tHandle != IntPtr.Zero)
+                                                CloseHandle(tHandle);
+                                        }
+                                    }
+                                    break;
                                 }
-                                break;
+                                timeout = 200;
+
                             }
-                            timeout = 200;
+
+                            sh.Close();
+                            quitSync.WaitOne();
+                            return ms.ToArray();
 
                         }
-
-                        sh.Close();
-                        quitSync.WaitOne();
-                        return ms.ToArray();
-
                     }
+                    return null;
                 }
-                return null;
+            }
+            catch(Win32Exception ex)
+            {
+                throw new InvalidOperationException("Unable to connect to the printer.", ex);
             }
         }
 
