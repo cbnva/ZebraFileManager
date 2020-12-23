@@ -346,6 +346,14 @@ namespace ZebraFileManager
         private void btnRefresh_Click(object sender, EventArgs e)
         {
 
+            if (treeView1.SelectedNode?.Tag is Printer)
+            {
+                BeginRefreshPrinterNode(treeView1.SelectedNode);
+            }
+            else if (treeView1.SelectedNode?.Parent?.Tag is Printer)
+            {
+                BeginRefreshPrinterNode(treeView1.SelectedNode.Parent);
+            }
         }
 
         private void btnAddUSBPrinter_Click(object sender, EventArgs e)
