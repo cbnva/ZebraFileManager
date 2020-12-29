@@ -72,9 +72,11 @@ namespace ZebraFileManager
                     switch (setting.Type)
                     {
                         case SettingType.Enum:
+                            var range = setting.Range.Split(',').ToList();
+                            range.Insert(0, "");
                             newCell = new DataGridViewComboBoxCell()
                             {
-                                DataSource = setting.Range.Split(',')
+                                DataSource = range
                             };
                             break;
                         case SettingType.Bool:
