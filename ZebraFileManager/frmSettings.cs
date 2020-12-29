@@ -45,7 +45,7 @@ namespace ZebraFileManager
                 settings = new SortableBindingList<Setting>(printer.GetSettings());
                 settings.ListChanged += Settings_ListChanged;
 
-                Invoke(new Action(() => { dataGridView1.DataSource = settings; btnSave.Text = $"Save ({changedSettings.Count})"; }));
+                Invoke(new Action(() => { Filter(); btnSave.Text = $"Save ({changedSettings.Count})"; }));
             }));
         }
 
@@ -192,6 +192,38 @@ namespace ZebraFileManager
                 }
             }
 
+        }
+
+
+        System.Threading.Timer filterTimer;
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (filterTimer == null)
+                filterTimer = new System.Threading.Timer(x => Filter());
+            filterTimer.Change(500, Timeout.Infinite);
+        }
+        object filterLock = new object();
+        private void Filter()
+        {
+            lock (filterLock)
+            {
+                var oldList = dataGridView1.DataSource as SortableBindingList<Setting>;
+                if (!string.IsNullOrWhiteSpace(txtFilter.Text))
+                {
+                    var filtered = new SortableBindingList<Setting>(settings.Where(x => x.Name.ToLower().Contains(txtFilter.Text.ToLower())).ToList());
+                    if (oldList != null)
+                        filtered.CopySortingFrom(oldList);
+
+                    Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), filtered);
+                }
+                else
+                {
+                    if (oldList != null)
+                        settings.CopySortingFrom(oldList);
+
+                    Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), settings);
+                }
+            }
         }
     }
 }

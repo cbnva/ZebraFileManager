@@ -94,6 +94,13 @@ namespace Library.Forms
             OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
+        public virtual void CopySortingFrom(SortableBindingList<T> list)
+        {
+            this._isSorted = list._isSorted;
+            this._sortDirection = list._sortDirection;
+            this._sortProperty = list._sortProperty;
+        }
+
 
         private int Compare(T lhs, T rhs)
         {
