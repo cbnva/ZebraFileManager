@@ -110,6 +110,7 @@ namespace ZebraFileManager
             var node = new TreeNode(p.Host);
             node.Tag = p;
             treeView1.Nodes.Add(node);
+            treeView1.SelectedNode = node;
             BeginRefreshPrinterNode(node);
         }
 
@@ -339,6 +340,7 @@ namespace ZebraFileManager
                 var node = new TreeNode(port.Description);
                 node.Tag = p;
                 treeView1.Nodes.Add(node);
+                treeView1.SelectedNode = node;
                 BeginRefreshPrinterNode(node);
             }
         }
@@ -363,6 +365,7 @@ namespace ZebraFileManager
             var node = new TreeNode(p.PrinterName);
             node.Tag = p;
             treeView1.Nodes.Add(node);
+            treeView1.SelectedNode = node;
             BeginRefreshPrinterNode(node);
 
 
