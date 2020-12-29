@@ -30,8 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.typeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -41,6 +39,10 @@
             this.accessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.defaultDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.settingBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnExportChangedZPL = new System.Windows.Forms.Button();
+            this.btnExportNonDefaults = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.settingBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -70,26 +72,6 @@
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Location = new System.Drawing.Point(12, 12);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
-            this.btnRefresh.TabIndex = 1;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(713, 12);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save (0)";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -152,11 +134,56 @@
             // 
             this.settingBindingSource.DataSource = typeof(ZebraFileManager.Zebra.Setting);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(12, 12);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 1;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(713, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save (0)";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnExportChangedZPL
+            // 
+            this.btnExportChangedZPL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportChangedZPL.Location = new System.Drawing.Point(523, 12);
+            this.btnExportChangedZPL.Name = "btnExportChangedZPL";
+            this.btnExportChangedZPL.Size = new System.Drawing.Size(184, 23);
+            this.btnExportChangedZPL.TabIndex = 2;
+            this.btnExportChangedZPL.Text = "Export unsaved changes as .zpl...";
+            this.btnExportChangedZPL.UseVisualStyleBackColor = true;
+            this.btnExportChangedZPL.Click += new System.EventHandler(this.btnExportChangedAsZPL_Click);
+            // 
+            // btnExportNonDefaults
+            // 
+            this.btnExportNonDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportNonDefaults.Location = new System.Drawing.Point(333, 12);
+            this.btnExportNonDefaults.Name = "btnExportNonDefaults";
+            this.btnExportNonDefaults.Size = new System.Drawing.Size(184, 23);
+            this.btnExportNonDefaults.TabIndex = 2;
+            this.btnExportNonDefaults.Text = "Export non-default settings...";
+            this.btnExportNonDefaults.UseVisualStyleBackColor = true;
+            this.btnExportNonDefaults.Click += new System.EventHandler(this.btnExportNonDefaults_Click);
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnExportNonDefaults);
+            this.Controls.Add(this.btnExportChangedZPL);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.dataGridView1);
@@ -182,5 +209,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn accessDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn defaultDataGridViewTextBoxColumn;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnExportChangedZPL;
+        private System.Windows.Forms.Button btnExportNonDefaults;
     }
 }

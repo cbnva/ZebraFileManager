@@ -146,5 +146,52 @@ namespace ZebraFileManager
 
             }
         }
+
+        private void btnExportChangedAsZPL_Click(object sender, EventArgs e)
+        {
+            if (changedSettings.Count != 0)
+            {
+                var sb = new StringBuilder("! U ");
+                foreach (var item in changedSettings)
+                {
+                    sb.AppendLine($"setvar \"{item.Name}\" \"{item.Value}\"");
+                }
+                sb.AppendLine("END ");
+
+                using (var fd = new SaveFileDialog())
+                {
+                    fd.Filter = ".zpl file (*.zpl)|*.zpl";
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.WriteAllText(fd.FileName, sb.ToString());
+                    }
+                }
+            }
+
+        }
+
+        private void btnExportNonDefaults_Click(object sender, EventArgs e)
+        {
+            var nonDefaultSettings = settings.Where(x => x.Access == SettingAccess.RW && x.Value != x.Default).ToList();
+            if (nonDefaultSettings.Count != 0)
+            {
+                var sb = new StringBuilder("! U ");
+                foreach (var item in nonDefaultSettings)
+                {
+                    sb.AppendLine($"setvar \"{item.Name}\" \"{item.Value}\"");
+                }
+                sb.AppendLine("END ");
+
+                using (var fd = new SaveFileDialog())
+                {
+                    fd.Filter = ".zpl file (*.zpl)|*.zpl";
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.WriteAllText(fd.FileName, sb.ToString());
+                    }
+                }
+            }
+
+        }
     }
 }
