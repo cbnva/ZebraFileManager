@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Library.Forms;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,10 +17,13 @@ namespace ZebraFileManager
     public partial class frmSettings : Form
     {
         Printer printer;
+        SortableBindingList<Setting> settings;
+        List<Setting> changedSettings;
         public frmSettings(Printer printer)
         {
             InitializeComponent();
             this.printer = printer;
+            this.changedSettings = new List<Setting>();
             BeginReloadSettings();
         }
 
@@ -32,30 +36,35 @@ namespace ZebraFileManager
                     return;
                 }
 
-                var settings = printer.GetSettings();
+                if (settings != null)
+                {
+                    settings.ListChanged -= Settings_ListChanged;
+                }
 
-                Invoke(new Action(() => dataGridView1.DataSource = settings));
+                changedSettings.Clear();
+                settings = new SortableBindingList<Setting>(printer.GetSettings());
+                settings.ListChanged += Settings_ListChanged;
+
+                Invoke(new Action(() => { dataGridView1.DataSource = settings; btnSave.Text = $"Save ({changedSettings.Count})"; }));
             }));
+        }
+
+        private void Settings_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            if (e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor.Name == "Value")
+            {
+                var setting = settings[e.OldIndex];
+                if (!changedSettings.Contains(setting))
+                {
+                    changedSettings.Add(setting);
+                    Invoke(new Action(() => btnSave.Text = $"Save ({changedSettings.Count})"));
+                }
+            }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             BeginReloadSettings();
-        }
-
-        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-
-        }
-
-        private void dataGridView1_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
-        {
-
         }
 
         private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -100,9 +109,42 @@ namespace ZebraFileManager
                         row.Cells[valueDataGridViewTextBoxColumn.Index] = newCell;
                     }
                     row.Cells[valueDataGridViewTextBoxColumn.Index].ReadOnly = setting.Access == SettingAccess.R;
+
                 }
             }
 
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+            {
+                foreach (var setting in changedSettings)
+                {
+                    printer.SetSettingSGD(setting.Name, setting.Value);
+                }
+                changedSettings.Clear();
+                Invoke(new Action(() => btnSave.Text = $"Save ({changedSettings.Count})"));
+                BeginReloadSettings();
+            }));
+        }
+
+        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.ColumnIndex == this.valueDataGridViewTextBoxColumn.Index && dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].IsInEditMode)
+            {
+                var setting = dataGridView1.Rows[e.RowIndex].DataBoundItem as Setting;
+                if (!setting.IsValidValue(e.FormattedValue))
+                {
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "Invalid Value";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "";
+                }
+
+            }
         }
     }
 }

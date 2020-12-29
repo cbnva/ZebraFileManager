@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.settingBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnSave = new System.Windows.Forms.Button();
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.typeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -40,6 +40,7 @@
             this.archiveDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.accessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.defaultDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.settingBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.settingBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -67,9 +68,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(776, 397);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridView1_CellBeginEdit);
-            this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
-            this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
+            this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
             // 
             // btnRefresh
@@ -82,9 +81,15 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
-            // settingBindingSource
+            // btnSave
             // 
-            this.settingBindingSource.DataSource = typeof(ZebraFileManager.Zebra.Setting);
+            this.btnSave.Location = new System.Drawing.Point(713, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save (0)";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -143,11 +148,16 @@
             this.defaultDataGridViewTextBoxColumn.Name = "defaultDataGridViewTextBoxColumn";
             this.defaultDataGridViewTextBoxColumn.ReadOnly = true;
             // 
+            // settingBindingSource
+            // 
+            this.settingBindingSource.DataSource = typeof(ZebraFileManager.Zebra.Setting);
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.dataGridView1);
             this.Name = "frmSettings";
@@ -171,5 +181,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn archiveDataGridViewCheckBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn accessDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn defaultDataGridViewTextBoxColumn;
+        private System.Windows.Forms.Button btnSave;
     }
 }
