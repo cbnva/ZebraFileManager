@@ -69,6 +69,7 @@
     <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SortableBindingList.cs" />
     <Compile Include="Zebra\AllConfigReturn.cs" />
     <Compile Include="Zebra\Drive.cs" />
     <Compile Include="Zebra\File.cs" />
