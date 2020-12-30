@@ -83,6 +83,9 @@ namespace ZebraFileManager
                         case SettingType.Enum:
                             var range = setting.Range.Split(',').ToList();
                             range.Insert(0, "");
+                            if (!range.Contains(setting.Value))
+                                range.Add(setting.Value);
+
                             newCell = new DataGridViewComboBoxCell()
                             {
                                 DataSource = range
