@@ -96,9 +96,7 @@ namespace Library.Forms
 
         public virtual void CopySortingFrom(SortableBindingList<T> list)
         {
-            this._isSorted = list._isSorted;
-            this._sortDirection = list._sortDirection;
-            this._sortProperty = list._sortProperty;
+            this.ApplySortCore(list._sortProperty, list._sortDirection);
         }
 
 
