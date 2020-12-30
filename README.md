@@ -31,3 +31,4 @@ There are very few error checks, comments, or good coding practices. Again, feel
 
 ## Screenshots ##
 ![Main Form](/../screenshots/MainForm.png?raw=true "Main Form")
+![Settings](/../screenshots/Settings.png?raw=true "Settings")
