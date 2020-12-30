@@ -208,21 +208,59 @@ namespace ZebraFileManager
             lock (filterLock)
             {
                 var oldList = dataGridView1.DataSource as SortableBindingList<Setting>;
-                if (!string.IsNullOrWhiteSpace(txtFilter.Text))
-                {
-                    var filtered = new SortableBindingList<Setting>(settings.Where(x => x.Name.ToLower().Contains(txtFilter.Text.ToLower())).ToList());
-                    if (oldList != null)
-                        filtered.CopySortingFrom(oldList);
+                List<Setting> filteredList;
 
-                    Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), filtered);
-                }
+                // Access Filter
+                SettingAccess? accessFilter = null;
+                if (chkFilterR.Checked)
+                    accessFilter = SettingAccess.R;
+                else if (chkFilterRW.Checked)
+                    accessFilter = SettingAccess.RW;
+                else if (chkFilterW.Checked)
+                    accessFilter = SettingAccess.W;
+
+                if (accessFilter != null)
+                    filteredList = settings.Where(x => x.Access == accessFilter.Value).ToList();
                 else
-                {
-                    if (oldList != null)
-                        settings.CopySortingFrom(oldList);
+                    filteredList = new List<Setting>(settings);
 
-                    Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), settings);
+                // Name filter
+                if (!string.IsNullOrWhiteSpace(txtFilter.Text))
+                    filteredList = filteredList.Where(x => x.Name.ToLower().Contains(txtFilter.Text.ToLower())).ToList();
+
+
+                // Assign the new list to the DataGridView
+                var filtered = new SortableBindingList<Setting>(filteredList);
+                if (oldList != null)
+                    filtered.CopySortingFrom(oldList);
+
+                Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), filtered);
+
+            }
+        }
+
+        bool chkChanging;
+        private void chkFilter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkChanging && sender is CheckBox)
+            {
+                chkChanging = true;
+
+                var checkbox = sender as CheckBox;
+                if (checkbox.Checked) // This box was checked. Need to ensure the others are unchecked
+                {
+                    var list = new List<CheckBox> { chkFilterR, chkFilterRW, chkFilterW };
+                    list.Remove(checkbox);
+                    foreach (var item in list)
+                        item.Checked = false;
                 }
+                // else {} No need to handle anything if it was unchecked
+
+                if (filterTimer == null)
+                    filterTimer = new System.Threading.Timer(x => Filter());
+                filterTimer.Change(50, Timeout.Infinite);
+
+                chkChanging = false;
             }
         }
     }

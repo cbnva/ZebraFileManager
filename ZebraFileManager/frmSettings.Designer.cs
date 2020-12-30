@@ -30,10 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnRefresh = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnExportChangedZPL = new System.Windows.Forms.Button();
-            this.btnExportNonDefaults = new System.Windows.Forms.Button();
             this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.typeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -43,8 +39,15 @@
             this.accessDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.defaultDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.settingBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnExportChangedZPL = new System.Windows.Forms.Button();
+            this.btnExportNonDefaults = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
+            this.chkFilterR = new System.Windows.Forms.CheckBox();
+            this.chkFilterRW = new System.Windows.Forms.CheckBox();
+            this.chkFilterW = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.settingBindingSource)).BeginInit();
             this.SuspendLayout();
@@ -70,53 +73,10 @@
             this.dataGridView1.DataSource = this.settingBindingSource;
             this.dataGridView1.Location = new System.Drawing.Point(12, 41);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(776, 397);
+            this.dataGridView1.Size = new System.Drawing.Size(975, 397);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
             this.dataGridView1.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridView1_RowsAdded);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Location = new System.Drawing.Point(12, 12);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
-            this.btnRefresh.TabIndex = 1;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(713, 12);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save (0)";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnExportChangedZPL
-            // 
-            this.btnExportChangedZPL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExportChangedZPL.Location = new System.Drawing.Point(523, 12);
-            this.btnExportChangedZPL.Name = "btnExportChangedZPL";
-            this.btnExportChangedZPL.Size = new System.Drawing.Size(184, 23);
-            this.btnExportChangedZPL.TabIndex = 2;
-            this.btnExportChangedZPL.Text = "Export unsaved changes as .zpl...";
-            this.btnExportChangedZPL.UseVisualStyleBackColor = true;
-            this.btnExportChangedZPL.Click += new System.EventHandler(this.btnExportChangedAsZPL_Click);
-            // 
-            // btnExportNonDefaults
-            // 
-            this.btnExportNonDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExportNonDefaults.Location = new System.Drawing.Point(333, 12);
-            this.btnExportNonDefaults.Name = "btnExportNonDefaults";
-            this.btnExportNonDefaults.Size = new System.Drawing.Size(184, 23);
-            this.btnExportNonDefaults.TabIndex = 2;
-            this.btnExportNonDefaults.Text = "Export non-default settings...";
-            this.btnExportNonDefaults.UseVisualStyleBackColor = true;
-            this.btnExportNonDefaults.Click += new System.EventHandler(this.btnExportNonDefaults_Click);
             // 
             // nameDataGridViewTextBoxColumn
             // 
@@ -179,6 +139,49 @@
             // 
             this.settingBindingSource.DataSource = typeof(ZebraFileManager.Zebra.Setting);
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(12, 12);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
+            this.btnRefresh.TabIndex = 1;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(912, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save (0)";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnExportChangedZPL
+            // 
+            this.btnExportChangedZPL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportChangedZPL.Location = new System.Drawing.Point(722, 12);
+            this.btnExportChangedZPL.Name = "btnExportChangedZPL";
+            this.btnExportChangedZPL.Size = new System.Drawing.Size(184, 23);
+            this.btnExportChangedZPL.TabIndex = 2;
+            this.btnExportChangedZPL.Text = "Export unsaved changes as .zpl...";
+            this.btnExportChangedZPL.UseVisualStyleBackColor = true;
+            this.btnExportChangedZPL.Click += new System.EventHandler(this.btnExportChangedAsZPL_Click);
+            // 
+            // btnExportNonDefaults
+            // 
+            this.btnExportNonDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportNonDefaults.Location = new System.Drawing.Point(532, 12);
+            this.btnExportNonDefaults.Name = "btnExportNonDefaults";
+            this.btnExportNonDefaults.Size = new System.Drawing.Size(184, 23);
+            this.btnExportNonDefaults.TabIndex = 2;
+            this.btnExportNonDefaults.Text = "Export non-default settings...";
+            this.btnExportNonDefaults.UseVisualStyleBackColor = true;
+            this.btnExportNonDefaults.Click += new System.EventHandler(this.btnExportNonDefaults_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -194,15 +197,54 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.Location = new System.Drawing.Point(131, 14);
             this.txtFilter.Name = "txtFilter";
-            this.txtFilter.Size = new System.Drawing.Size(196, 20);
+            this.txtFilter.Size = new System.Drawing.Size(240, 20);
             this.txtFilter.TabIndex = 4;
             this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
+            // 
+            // chkFilterR
+            // 
+            this.chkFilterR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkFilterR.AutoSize = true;
+            this.chkFilterR.Location = new System.Drawing.Point(377, 16);
+            this.chkFilterR.Name = "chkFilterR";
+            this.chkFilterR.Size = new System.Drawing.Size(34, 17);
+            this.chkFilterR.TabIndex = 5;
+            this.chkFilterR.Text = "R";
+            this.chkFilterR.UseVisualStyleBackColor = true;
+            this.chkFilterR.CheckedChanged += new System.EventHandler(this.chkFilter_CheckedChanged);
+            // 
+            // chkFilterRW
+            // 
+            this.chkFilterRW.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkFilterRW.AutoSize = true;
+            this.chkFilterRW.Location = new System.Drawing.Point(417, 16);
+            this.chkFilterRW.Name = "chkFilterRW";
+            this.chkFilterRW.Size = new System.Drawing.Size(45, 17);
+            this.chkFilterRW.TabIndex = 5;
+            this.chkFilterRW.Text = "RW";
+            this.chkFilterRW.UseVisualStyleBackColor = true;
+            this.chkFilterRW.CheckedChanged += new System.EventHandler(this.chkFilter_CheckedChanged);
+            // 
+            // chkFilterW
+            // 
+            this.chkFilterW.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkFilterW.AutoSize = true;
+            this.chkFilterW.Location = new System.Drawing.Point(468, 16);
+            this.chkFilterW.Name = "chkFilterW";
+            this.chkFilterW.Size = new System.Drawing.Size(37, 17);
+            this.chkFilterW.TabIndex = 5;
+            this.chkFilterW.Text = "W";
+            this.chkFilterW.UseVisualStyleBackColor = true;
+            this.chkFilterW.CheckedChanged += new System.EventHandler(this.chkFilter_CheckedChanged);
             // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(999, 450);
+            this.Controls.Add(this.chkFilterW);
+            this.Controls.Add(this.chkFilterRW);
+            this.Controls.Add(this.chkFilterR);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnExportNonDefaults);
@@ -237,5 +279,8 @@
         private System.Windows.Forms.Button btnExportNonDefaults;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.CheckBox chkFilterR;
+        private System.Windows.Forms.CheckBox chkFilterRW;
+        private System.Windows.Forms.CheckBox chkFilterW;
     }
 }
