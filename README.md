@@ -8,7 +8,7 @@ I'm probably not going to fix problems I'm not having, but you're more than welc
 
 I wrote this as an internal tool for work, and it does what I need.
 
-There are basically no error checks, comments, or good coding practices. Again, feel free to improve it.
+There are very few error checks, comments, or good coding practices. Again, feel free to improve it.
 
 ## Features ##
 - Connects over IP (LAN/WLAN) to port 9100
@@ -18,11 +18,11 @@ There are basically no error checks, comments, or good coding practices. Again, 
 - Rename/Delete Files
 - "Factory Reset"
   - Deletes all files on E: drive and changes settings back to default.
+- Change settings
+- Generate settings change script
   
 ## Planned ##
-- Change settings
 - Run ZPL/CPCL scripts
-- Generate settings change script
   
 ## Coding ##
 - Only references a few NuGet packages; no Zebra dependencies
