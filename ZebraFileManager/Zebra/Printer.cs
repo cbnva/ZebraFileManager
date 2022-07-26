@@ -35,7 +35,7 @@ namespace ZebraFileManager.Zebra
             }
             var value = this.RunCommand(command);
 
-            var filesRegex = new Regex(@"^\*\s+(?<FileName>\S+)\s+(?<Size>\d+)(?:\s+(?<Attribute>\w))*", RegexOptions.Compiled | RegexOptions.Multiline);
+            var filesRegex = new Regex(@"^\*?\s+(?<FileName>\S+)\s+(?<Size>\d+)(?:\s+(?<Attribute>\w))*\r", RegexOptions.Compiled | RegexOptions.Multiline);
             var drivesRegex = new Regex(@"^-\s*(?<free>\d+) bytes free (?<letter>[A-Za-z]):\s+(?<name>.+)$", RegexOptions.Compiled | RegexOptions.Multiline);
             var newFS = (updateLastResults && lastfs != null) ? lastfs : new FileSystem { Drives = new List<Drive>(), FileSystemEntries = new List<File>() };
             var activeDrives = new List<Drive>();
@@ -58,10 +58,19 @@ namespace ZebraFileManager.Zebra
 
             foreach (Match m in filesRegex.Matches(value))
             {
-                var file = newFS.FileSystemEntries.FirstOrDefault(x => x.Path == m.Groups["FileName"].Value.Trim()) ?? new File()
+                var newFile = new File()
                 {
-                    Path = m.Groups["FileName"].Value.Trim(),
+                    Drive = "\\",
+                    Filename = m.Groups["FileName"].Value.Trim(),
                 };
+                if (newFile.Filename[1] == ':')
+                {
+                    newFile.Drive = newFile.Filename[0].ToString();
+                    newFile.Filename = newFile.Filename.Substring(2);
+                }
+
+                var file = newFS.FileSystemEntries.FirstOrDefault(x => x.Filename == newFile.Filename && x.Drive == newFile.Drive) ?? newFile;
+
                 file.Size = int.Parse(m.Groups["Size"].Value);
                 file.Attributes = new List<string>();
                 foreach (Capture c in m.Groups["Attribute"].Captures)
@@ -69,9 +78,10 @@ namespace ZebraFileManager.Zebra
                     file.Attributes.Add(c.Value);
                 }
 
-                var parentDrive = newFS.Drives.FirstOrDefault(x => x.Letter[0] == file.Path[0]) ?? new Drive
+
+                var parentDrive = newFS.Drives.FirstOrDefault(x => x.Letter == file.Drive) ?? new Drive
                 {
-                    Letter = file.Path[0].ToString(),
+                    Letter = file.Drive,
                     Name = "",
                 };
 
@@ -94,19 +104,19 @@ namespace ZebraFileManager.Zebra
                 newFS.Drives.RemoveAll(x => !activeDrives.Contains(x));
                 newFS.FileSystemEntries.RemoveAll(x => !activeFiles.Contains(x));
                 foreach (var drive in newFS.Drives)
-                    drive.Used = newFS.FileSystemEntries.Where(x => x.Path.ToUpper()[0] == drive.Letter.ToUpper()[0]).Sum(x => x.Size);
+                    drive.Used = newFS.FileSystemEntries.Where(x => x.Drive == drive.Letter).Sum(x => x.Size);
 
             }
             else if (updateLastResults)
             {
-                newFS.FileSystemEntries.RemoveAll(x => !activeFiles.Contains(x) && x.Path.ToUpper()[0] == rootDirectory.ToUpper()[0]);
-                foreach (var drive in newFS.Drives.Where(x => x.Letter.ToUpper()[0] == rootDirectory.ToUpper()[0]))
-                    drive.Used = newFS.FileSystemEntries.Where(x => x.Path.ToUpper()[0] == drive.Letter.ToUpper()[0]).Sum(x => x.Size);
+                newFS.FileSystemEntries.RemoveAll(x => !activeFiles.Contains(x) && x.Drive == rootDirectory);
+                foreach (var drive in newFS.Drives.Where(x => x.Letter == rootDirectory))
+                    drive.Used = newFS.FileSystemEntries.Where(x => x.Drive == drive.Letter).Sum(x => x.Size);
             }
             else
             {
                 foreach (var drive in newFS.Drives)
-                    drive.Used = newFS.FileSystemEntries.Where(x => x.Path.ToUpper()[0] == drive.Letter.ToUpper()[0]).Sum(x => x.Size);
+                    drive.Used = newFS.FileSystemEntries.Where(x => x.Drive == drive.Letter).Sum(x => x.Size);
             }
 
 
@@ -216,7 +226,7 @@ namespace ZebraFileManager.Zebra
             var fs = GetFileSystem("E:", false);
             foreach (var item in fs.FileSystemEntries)
             {
-                DeleteFile(item.Path);
+                DeleteFile(item.Filename);
             }
 
             // Ensure that we're not in Line Print Mode, which disables JSON
@@ -240,7 +250,7 @@ namespace ZebraFileManager.Zebra
             }
             sb.AppendLine("END ");
 
-            var results = RunCommand("! U1 do \"device.restore_defaults\" \"power\"\r\n", false); 
+            var results = RunCommand("! U1 do \"device.restore_defaults\" \"power\"\r\n", false);
             results = RunCommand(sb.ToString(), false);
 
 

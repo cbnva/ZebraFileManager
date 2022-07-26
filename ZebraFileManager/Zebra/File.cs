@@ -8,7 +8,9 @@ namespace ZebraFileManager.Zebra
 {
     public class File
     {
-        public string Path { get; set; }
+        public string Drive { get; set; }
+
+        public string Filename { get; set; }
 
         public int Size { get; set; }
 

@@ -185,9 +185,9 @@ namespace ZebraFileManager
                 var fs = printer.LastFileSystemResults;
                 listView1.BeginUpdate();
                 listView1.Items.Clear();
-                foreach (var file in fs.FileSystemEntries.Where(x => x.Path[0] == drive.Letter[0]))
+                foreach (var file in fs.FileSystemEntries.Where(x => x.Drive == drive.Letter))
                 {
-                    var lvItem = new ListViewItem(new[] { file.Path.Split(':')[1], BytesToString(file.Size), Path.GetExtension(file.Path) + " file", string.Join(", ", file.Attributes) });
+                    var lvItem = new ListViewItem(new[] { file.Filename, BytesToString(file.Size), Path.GetExtension(file.Filename) + " file", string.Join(", ", file.Attributes) });
                     lvItem.Tag = file;
                     listView1.Items.Add(lvItem);
                 }
@@ -245,8 +245,8 @@ namespace ZebraFileManager
                 var tempFiles = new List<string>();
                 foreach (var file in files)
                 {
-                    var targetPath = Path.Combine(tempDir, Path.GetFileName(file.Path));
-                    var bits = p.GetFileContents(file.Path);
+                    var targetPath = Path.Combine(tempDir, Path.GetFileName(file.Filename));
+                    var bits = p.GetFileContents(file.Filename);
                     System.IO.File.WriteAllBytes(targetPath, bits);
                     tempFiles.Add(targetPath);
                 }
@@ -290,8 +290,8 @@ namespace ZebraFileManager
                     var file = item.Tag as File;
                     if (file != null)
                     {
-                        printer.DeleteFile(file.Path);
-                        BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Path[0].ToString());
+                        printer.DeleteFile(file.Filename);
+                        BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Filename[0].ToString());
                     }
                 }
             }
@@ -310,10 +310,10 @@ namespace ZebraFileManager
                 var file = item.Tag as File;
                 if (file != null)
                 {
-                    var newName = file.Path[0] + ":" + e.Label;
-                    printer.RenameFile(file.Path, newName);
-                    file.Path = newName;
-                    BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Path[0].ToString());
+                    var newName = file.Filename[0] + ":" + e.Label;
+                    printer.RenameFile(file.Filename, newName);
+                    file.Filename = newName;
+                    BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Filename[0].ToString());
                 }
             }
         }
