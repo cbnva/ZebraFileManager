@@ -251,6 +251,8 @@ namespace ZebraFileManager.Zebra
         IPV4_Address,
         [EnumMember(Value = "double")]
         Double,
+        [EnumMember(Value = "json")]
+        Json,
     }
 
     public enum SettingAccess
