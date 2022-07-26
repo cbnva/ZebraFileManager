@@ -71,11 +71,11 @@ namespace ZebraFileManager.Zebra
                             var timeout = 20000;
                             var buffer = new byte[4096];
                             var quitSync = new ManualResetEvent(true);
+                            uint ioThread = 0;
 
                             while (true)
                             {
 
-                                uint ioThread = 0;
                                 var t = Task.Run(() =>
                                 {
                                     ioThread = GetCurrentThreadId();
@@ -112,12 +112,25 @@ namespace ZebraFileManager.Zebra
                                     }
                                     break;
                                 }
-                                timeout = 200;
+                                timeout = 500;
 
                             }
 
                             sh.Close();
-                            quitSync.WaitOne();
+                            if (!quitSync.WaitOne(2000))
+                            {
+                                IntPtr thread = IntPtr.Zero;
+                                try
+                                {
+                                    thread = OpenThread(ThreadAccess.All, false, ioThread);
+                                    TerminateThread(thread, 0);
+                                }
+                                finally
+                                {
+                                    if (thread != IntPtr.Zero)
+                                        CloseHandle(thread);
+                                }
+                            }
                             return ms.ToArray();
 
                         }
@@ -217,6 +230,9 @@ namespace ZebraFileManager.Zebra
 
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
+
+        [DllImport("kernel32.dll")]
+        static extern bool TerminateThread(IntPtr hThread, uint dwExitCode);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
