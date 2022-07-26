@@ -417,5 +417,35 @@ namespace ZebraFileManager
         {
             RefreshBTPorts();
         }
+
+        private void btnCopyFilesTo_Click(object sender, EventArgs e)
+        {
+            var files = new List<File>();
+            Printer p = treeView1.SelectedNode.Parent?.Tag as Printer;
+            if (p == null)
+                return;
+
+            if (listView1.SelectedItems.Count == 0)
+            {
+                return;
+            }
+            files.AddRange(listView1.SelectedItems.OfType<ListViewItem>().Where(x => x.Tag is File).Select(x => x.Tag as File));
+
+            var fd = new FolderPicker();
+            if (fd.ShowDialog(this.Handle) == true)
+            {
+                var folder = fd.ResultPath;
+
+                ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+                {
+                    foreach (var file in files)
+                    {
+                        var targetPath = Path.Combine(folder, Path.GetFileName(file.Filename));
+                        var bits = p.GetFileContents(file.Filename);
+                        System.IO.File.WriteAllBytes(targetPath, bits);
+                    }
+                }));
+            }
+        }
     }
 }

@@ -53,6 +53,7 @@
             this.factoryResetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRefreshBT = new System.Windows.Forms.Button();
             this.btnRefreshUSB = new System.Windows.Forms.Button();
+            this.btnCopyFilesTo = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -285,11 +286,22 @@
             this.btnRefreshUSB.UseVisualStyleBackColor = true;
             this.btnRefreshUSB.Click += new System.EventHandler(this.btnRefreshUSB_Click);
             // 
+            // btnCopyFilesTo
+            // 
+            this.btnCopyFilesTo.Location = new System.Drawing.Point(875, 70);
+            this.btnCopyFilesTo.Name = "btnCopyFilesTo";
+            this.btnCopyFilesTo.Size = new System.Drawing.Size(75, 23);
+            this.btnCopyFilesTo.TabIndex = 7;
+            this.btnCopyFilesTo.Text = "Copy To...";
+            this.btnCopyFilesTo.UseVisualStyleBackColor = true;
+            this.btnCopyFilesTo.Click += new System.EventHandler(this.btnCopyFilesTo_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(962, 450);
+            this.Controls.Add(this.btnCopyFilesTo);
             this.Controls.Add(this.cbUSB);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.splitContainer1);
@@ -342,6 +354,7 @@
         private System.Windows.Forms.ToolStripMenuItem factoryResetToolStripMenuItem;
         private System.Windows.Forms.Button btnRefreshUSB;
         private System.Windows.Forms.Button btnRefreshBT;
+        private System.Windows.Forms.Button btnCopyFilesTo;
     }
 }
 
