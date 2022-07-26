@@ -126,14 +126,16 @@ namespace ZebraFileManager.Zebra
                     return false;
 
                 case SettingType.String:
-                    if (value is string && Range is string && stringRangeRegex.IsMatch(Range))
+                    if ((value is string || value == null) && Range is string && stringRangeRegex.IsMatch(Range))
                     {
                         var m = stringRangeRegex.Match(Range);
                         var min = int.Parse(m.Groups["min"].Value);
                         var max = int.Parse(m.Groups["max"].Value);
+                        if (value == null)
+                            return min == 0;
                         return min <= ((string)value).Length && ((string)value).Length <= max;
                     }
-                    return value is string;
+                    return value is string || value == null;
 
                 case SettingType.Integer:
                     if ((value is long || value is int || value is string) && Range is string && intRangeRegex.IsMatch(Range))
