@@ -1,5 +1,5 @@
 # Zebra File Manager
-Manages files on Zebra printers. Developed/Tested on QLn320 and ZQ620
+Manages files and settings on Zebra printers. Developed/Tested on QLn320 and ZQ620
 
 ## State ##
 Alpha product. It'll probably work, but no guarantees.
