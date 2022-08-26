@@ -35,7 +35,7 @@ namespace ZebraFileManager.Zebra
             }
             var value = this.RunCommand(command);
 
-            var filesRegex = new Regex(@"^\*?\s+(?<FileName>\S+)\s+(?<Size>\d+)(?:\s+(?<Attribute>\w))*\r", RegexOptions.Compiled | RegexOptions.Multiline);
+            var filesRegex = new Regex(@"^\*?\s+(?<FileName>\S+)\s+(?<Size>\d+)(?:\s+(?<Attribute>\w))*", RegexOptions.Compiled | RegexOptions.Multiline);
             var drivesRegex = new Regex(@"^-\s*(?<free>\d+) bytes free (?<letter>[A-Za-z]):\s+(?<name>.+)$", RegexOptions.Compiled | RegexOptions.Multiline);
             var newFS = (updateLastResults && lastfs != null) ? lastfs : new FileSystem { Drives = new List<Drive>(), FileSystemEntries = new List<File>() };
             var activeDrives = new List<Drive>();
@@ -63,6 +63,10 @@ namespace ZebraFileManager.Zebra
                     Drive = "\\",
                     Filename = m.Groups["FileName"].Value.Trim(),
                 };
+                if (newFile.Filename == "-")
+                { // Weird quirk in some file listings
+                    continue;
+                }
                 if (newFile.Filename[1] == ':')
                 {
                     newFile.Drive = newFile.Filename[0].ToString();
