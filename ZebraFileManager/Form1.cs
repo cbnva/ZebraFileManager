@@ -447,5 +447,22 @@ namespace ZebraFileManager
                 }));
             }
         }
+
+        private void btnSendFile_Click(object sender, EventArgs e)
+        {
+            Printer p = treeView1.SelectedNode.Tag as Printer;
+            if (p == null)
+                return;
+
+            var fd = new OpenFileDialog()
+            {
+            };
+            if((fd.ShowDialog() == DialogResult.OK) && System.IO.File.Exists(fd.FileName))
+            {
+                var contents = System.IO.File.ReadAllBytes(fd.FileName);
+                p.RunCommand(contents, false);
+                MessageBox.Show("File Sent");
+            }
+        }
     }
 }

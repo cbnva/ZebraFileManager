@@ -54,6 +54,7 @@
             this.btnRefreshBT = new System.Windows.Forms.Button();
             this.btnRefreshUSB = new System.Windows.Forms.Button();
             this.btnCopyFilesTo = new System.Windows.Forms.Button();
+            this.btnSendFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -296,11 +297,22 @@
             this.btnCopyFilesTo.UseVisualStyleBackColor = true;
             this.btnCopyFilesTo.Click += new System.EventHandler(this.btnCopyFilesTo_Click);
             // 
+            // btnSendFile
+            // 
+            this.btnSendFile.Location = new System.Drawing.Point(794, 70);
+            this.btnSendFile.Name = "btnSendFile";
+            this.btnSendFile.Size = new System.Drawing.Size(75, 23);
+            this.btnSendFile.TabIndex = 8;
+            this.btnSendFile.Text = "Send File";
+            this.btnSendFile.UseVisualStyleBackColor = true;
+            this.btnSendFile.Click += new System.EventHandler(this.btnSendFile_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(962, 450);
+            this.Controls.Add(this.btnSendFile);
             this.Controls.Add(this.btnCopyFilesTo);
             this.Controls.Add(this.cbUSB);
             this.Controls.Add(this.comboBox1);
@@ -355,6 +367,7 @@
         private System.Windows.Forms.Button btnRefreshUSB;
         private System.Windows.Forms.Button btnRefreshBT;
         private System.Windows.Forms.Button btnCopyFilesTo;
+        private System.Windows.Forms.Button btnSendFile;
     }
 }
 
