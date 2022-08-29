@@ -59,7 +59,7 @@ namespace ZebraFileManager
         List<PortDescription> GetBTPorts()
         {
             var ports = new List<PortDescription>();
-            var regex = new Regex(@"^[a-fA-F0-9]&[a-fA-F0-9]{8}&[a-fA-F0-9]&(?<MAC>[a-fA-F0-9]{12})_[a-fA-F0-9]+$", RegexOptions.Compiled);
+            var regex = new Regex(@"^[a-fA-F0-9]&[a-fA-F0-9]{7,8}&[a-fA-F0-9]&(?<MAC>[a-fA-F0-9]{12})_[a-fA-F0-9]+$", RegexOptions.Compiled);
             using (var bthenum = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Enum\\BTHENUM"))
             {
                 var keynames = bthenum.GetSubKeyNames();
