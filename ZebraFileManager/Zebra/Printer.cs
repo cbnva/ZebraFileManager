@@ -230,7 +230,7 @@ namespace ZebraFileManager.Zebra
             var fs = GetFileSystem("E:", false);
             foreach (var item in fs.FileSystemEntries)
             {
-                DeleteFile(item.Filename);
+                DeleteFile(item.Path);
             }
 
             // Ensure that we're not in Line Print Mode, which disables JSON

@@ -246,7 +246,7 @@ namespace ZebraFileManager
                 foreach (var file in files)
                 {
                     var targetPath = Path.Combine(tempDir, Path.GetFileName(file.Filename));
-                    var bits = p.GetFileContents(file.Filename);
+                    var bits = p.GetFileContents(file.Path);
                     System.IO.File.WriteAllBytes(targetPath, bits);
                     tempFiles.Add(targetPath);
                 }
@@ -290,8 +290,8 @@ namespace ZebraFileManager
                     var file = item.Tag as File;
                     if (file != null)
                     {
-                        printer.DeleteFile(file.Filename);
-                        BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Filename[0].ToString());
+                        printer.DeleteFile(file.Path);
+                        BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Drive);
                     }
                 }
             }
@@ -308,12 +308,12 @@ namespace ZebraFileManager
                 var item = listView1.Items[e.Item];
                 var printer = treeView1.SelectedNode.Parent.Tag as Printer;
                 var file = item.Tag as File;
-                if (file != null)
+                if (file != null && !e.CancelEdit && !string.IsNullOrWhiteSpace(e.Label))
                 {
-                    var newName = file.Filename[0] + ":" + e.Label;
-                    printer.RenameFile(file.Filename, newName);
-                    file.Filename = newName;
-                    BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Filename[0].ToString());
+                    var newName = file.Drive + ":" + e.Label;
+                    printer.RenameFile(file.Path, newName);
+                    file.Filename = e.Label;
+                    BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, file.Drive);
                 }
             }
         }
@@ -440,8 +440,8 @@ namespace ZebraFileManager
                 {
                     foreach (var file in files)
                     {
-                        var targetPath = Path.Combine(folder, Path.GetFileName(file.Filename));
-                        var bits = p.GetFileContents(file.Filename);
+                        var targetPath = Path.Combine(folder, file.Filename);
+                        var bits = p.GetFileContents(file.Path);
                         System.IO.File.WriteAllBytes(targetPath, bits);
                     }
                 }));

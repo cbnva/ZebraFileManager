@@ -12,6 +12,21 @@ namespace ZebraFileManager.Zebra
 
         public string Filename { get; set; }
 
+        public string Path
+        {
+            get
+            {
+                if (Drive == @"\")
+                {
+                    return Filename;
+                }
+                else
+                {
+                    return Drive + ":" + Filename;
+                }
+            }
+        }
+
         public int Size { get; set; }
 
         public List<string> Attributes { get; set; }
