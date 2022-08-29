@@ -464,5 +464,18 @@ namespace ZebraFileManager
                 MessageBox.Show("File Sent");
             }
         }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var node = treeView1.Nodes.OfType<TreeNode>().FirstOrDefault(x => x.Tag == ctxPrinter.Tag);
+            if (node == null)
+                return;
+
+            var printer = ctxPrinter.Tag as Printer;
+            if (printer != null)
+            {
+                printer.RestartPrinter();
+            }
+        }
     }
 }

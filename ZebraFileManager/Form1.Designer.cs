@@ -55,6 +55,7 @@
             this.btnRefreshUSB = new System.Windows.Forms.Button();
             this.btnCopyFilesTo = new System.Windows.Forms.Button();
             this.btnSendFile = new System.Windows.Forms.Button();
+            this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -244,9 +245,10 @@
             this.ctxPrinter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.removeToolStripMenuItem,
             this.toolStripSeparator1,
-            this.factoryResetToolStripMenuItem});
+            this.factoryResetToolStripMenuItem,
+            this.restartToolStripMenuItem});
             this.ctxPrinter.Name = "ctxPrinter";
-            this.ctxPrinter.Size = new System.Drawing.Size(154, 54);
+            this.ctxPrinter.Size = new System.Drawing.Size(181, 98);
             // 
             // removeToolStripMenuItem
             // 
@@ -306,6 +308,13 @@
             this.btnSendFile.Text = "Send File";
             this.btnSendFile.UseVisualStyleBackColor = true;
             this.btnSendFile.Click += new System.EventHandler(this.btnSendFile_Click);
+            // 
+            // restartToolStripMenuItem
+            // 
+            this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
+            this.restartToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.restartToolStripMenuItem.Text = "Restart";
+            this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -368,6 +377,7 @@
         private System.Windows.Forms.Button btnRefreshBT;
         private System.Windows.Forms.Button btnCopyFilesTo;
         private System.Windows.Forms.Button btnSendFile;
+        private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
     }
 }
 

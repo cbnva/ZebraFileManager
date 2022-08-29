@@ -222,6 +222,13 @@ namespace ZebraFileManager.Zebra
 
         }
 
+        public virtual string RestartPrinter()
+        {
+            var results = SetSettingSGD("device.reset", "1");
+
+            return results;
+        }
+
         //public virtual 
 
         public virtual void FactoryReset()
