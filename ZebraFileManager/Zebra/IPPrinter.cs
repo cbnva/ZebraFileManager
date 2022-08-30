@@ -29,7 +29,10 @@ namespace ZebraFileManager.Zebra
 
         public override string RunCommand(string command, bool response = true)
         {
-            return Encoding.UTF8.GetString(RunCommand(Encoding.UTF8.GetBytes(command), response));
+            var responseContent = RunCommand(Encoding.UTF8.GetBytes(command), response);
+            if (responseContent != null)
+                return Encoding.UTF8.GetString(responseContent);
+            return null;
         }
 
         public override byte[] RunCommand(byte[] command, bool response = true)
