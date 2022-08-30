@@ -20,10 +20,8 @@ There are very few error checks, comments, or good coding practices. Again, feel
   - Deletes all files on E: drive and changes settings back to default.
 - Change settings
 - Generate settings change script
-  
-## Planned ##
 - Run ZPL/CPCL scripts
-  
+
 ## Coding ##
 - Only references a few NuGet packages; no Zebra dependencies
 - Could be used via powershell
