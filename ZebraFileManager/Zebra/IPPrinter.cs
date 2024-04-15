@@ -54,7 +54,7 @@ namespace ZebraFileManager.Zebra
                     using (var ms = new MemoryStream())
                     {
                         int read;
-                        socket.ReceiveTimeout = 5000;
+                        socket.ReceiveTimeout = 10000;
 
                         try
                         {
