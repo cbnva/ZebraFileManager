@@ -59,7 +59,12 @@ namespace ZebraFileManager.Zebra
                     {
                         using (var f = new System.IO.FileStream(sh, System.IO.FileAccess.ReadWrite))
                         {
-                            f.Write(command, 0, command.Length);
+                            var bufferSize = 1024 * 1024;
+                            for (int i = 0; i < command.Length; i += bufferSize)
+                            {
+                                f.Write(command, i, Math.Min(bufferSize, command.Length - i));
+
+                            }
                         }
                     }
                     if (response)
