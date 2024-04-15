@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,12 +12,20 @@ namespace ZebraFileManager.Zebra
     public abstract class Printer : IDisposable
     {
         public abstract bool Connect();
-        public abstract string RunCommand(string command, bool response = true);
-        public abstract byte[] RunCommand(byte[] command, bool response = true);
+        protected abstract string RunCommandInternal(string command, bool response = true);
+        protected abstract byte[] RunCommandInternal(byte[] command, bool response = true);
 
         public abstract bool Connected { get; }
 
+        public Printer()
+        {
+            Messages = new ObservableCollection<PrinterMessage>();
+        }
+
         FileSystem lastfs;
+
+        public ObservableCollection<PrinterMessage> Messages { get; private set; }
+
         public FileSystem LastFileSystemResults => lastfs;
 
         public virtual FileSystem GetFileSystem(string rootDirectory = null, bool updateLastResults = true)
@@ -130,6 +139,33 @@ namespace ZebraFileManager.Zebra
                 lastfs = newFS;
             }
             return newFS;
+        }
+
+        public virtual string RunCommand(string command, bool response = true)
+        {
+            Messages.Add(new PrinterMessage { StringContents = command, Direction = PrinterMessageType.Send });
+            var result = RunCommandInternal(command, response);
+            if (response)
+            {
+                if (result != null)
+                    Messages.Add(new PrinterMessage { StringContents = result, Direction = PrinterMessageType.Receive });
+                else
+                    Messages.Add(new PrinterMessage { StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
+            }
+            return result;
+        }
+        public virtual byte[] RunCommand(byte[] command, bool response = true)
+        {
+            Messages.Add(new PrinterMessage { ByteContents = command, Direction = PrinterMessageType.Send });
+            var result = RunCommandInternal(command, response);
+            if (response)
+            {
+                if (result != null)
+                    Messages.Add(new PrinterMessage { ByteContents = result, Direction = PrinterMessageType.Receive });
+                else
+                    Messages.Add(new PrinterMessage { StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
+            }
+            return result;
         }
 
         public virtual byte[] GetFileContents(string path)

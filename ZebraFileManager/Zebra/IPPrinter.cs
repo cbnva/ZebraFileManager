@@ -16,6 +16,11 @@ namespace ZebraFileManager.Zebra
 
         Socket socket;
 
+        public IPPrinter() : base()
+        {
+
+        }
+
         public override bool Connect()
         {
             if (socket?.Connected != true)
@@ -27,15 +32,15 @@ namespace ZebraFileManager.Zebra
             return socket.Connected;
         }
 
-        public override string RunCommand(string command, bool response = true)
+        protected override string RunCommandInternal(string command, bool response = true)
         {
-            var responseContent = RunCommand(Encoding.UTF8.GetBytes(command), response);
+            var responseContent = RunCommandInternal(Encoding.UTF8.GetBytes(command), response);
             if (responseContent != null)
                 return Encoding.UTF8.GetString(responseContent);
             return null;
         }
 
-        public override byte[] RunCommand(byte[] command, bool response = true)
+        protected override byte[] RunCommandInternal(byte[] command, bool response = true)
         {
 
             if (!Connected)

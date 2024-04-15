@@ -51,16 +51,25 @@
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.factoryResetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRefreshBT = new System.Windows.Forms.Button();
             this.btnRefreshUSB = new System.Windows.Forms.Button();
             this.btnCopyFilesTo = new System.Windows.Forms.Button();
             this.btnSendFile = new System.Windows.Forms.Button();
-            this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.txtHistory = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtSendCommand = new System.Windows.Forms.TextBox();
+            this.chkShowBinaryMessages = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.ctxPrinter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             this.SuspendLayout();
             // 
             // listView1
@@ -76,7 +85,7 @@
             this.listView1.LabelEdit = true;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(623, 335);
+            this.listView1.Size = new System.Drawing.Size(623, 277);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -112,7 +121,7 @@
             this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(311, 335);
+            this.treeView1.Size = new System.Drawing.Size(311, 277);
             this.treeView1.TabIndex = 1;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
@@ -145,10 +154,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(12, 103);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -158,7 +165,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.listView1);
-            this.splitContainer1.Size = new System.Drawing.Size(938, 335);
+            this.splitContainer1.Size = new System.Drawing.Size(938, 277);
             this.splitContainer1.SplitterDistance = 311;
             this.splitContainer1.TabIndex = 5;
             // 
@@ -248,7 +255,7 @@
             this.factoryResetToolStripMenuItem,
             this.restartToolStripMenuItem});
             this.ctxPrinter.Name = "ctxPrinter";
-            this.ctxPrinter.Size = new System.Drawing.Size(181, 98);
+            this.ctxPrinter.Size = new System.Drawing.Size(154, 76);
             // 
             // removeToolStripMenuItem
             // 
@@ -268,6 +275,13 @@
             this.factoryResetToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.factoryResetToolStripMenuItem.Text = "Factory Reset...";
             this.factoryResetToolStripMenuItem.Click += new System.EventHandler(this.factoryResetToolStripMenuItem_Click);
+            // 
+            // restartToolStripMenuItem
+            // 
+            this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
+            this.restartToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.restartToolStripMenuItem.Text = "Restart";
+            this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
             // 
             // btnRefreshBT
             // 
@@ -309,23 +323,83 @@
             this.btnSendFile.UseVisualStyleBackColor = true;
             this.btnSendFile.Click += new System.EventHandler(this.btnSendFile_Click);
             // 
-            // restartToolStripMenuItem
+            // splitContainer2
             // 
-            this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
-            this.restartToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.restartToolStripMenuItem.Text = "Restart";
-            this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Location = new System.Drawing.Point(12, 99);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.chkShowBinaryMessages);
+            this.splitContainer2.Panel2.Controls.Add(this.txtSendCommand);
+            this.splitContainer2.Panel2.Controls.Add(this.label4);
+            this.splitContainer2.Panel2.Controls.Add(this.txtHistory);
+            this.splitContainer2.Size = new System.Drawing.Size(938, 468);
+            this.splitContainer2.SplitterDistance = 277;
+            this.splitContainer2.TabIndex = 9;
+            // 
+            // txtHistory
+            // 
+            this.txtHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHistory.Location = new System.Drawing.Point(3, 3);
+            this.txtHistory.Multiline = true;
+            this.txtHistory.Name = "txtHistory";
+            this.txtHistory.ReadOnly = true;
+            this.txtHistory.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtHistory.Size = new System.Drawing.Size(932, 155);
+            this.txtHistory.TabIndex = 0;
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(109, 167);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Send Command";
+            // 
+            // txtSendCommand
+            // 
+            this.txtSendCommand.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSendCommand.Location = new System.Drawing.Point(197, 164);
+            this.txtSendCommand.Name = "txtSendCommand";
+            this.txtSendCommand.Size = new System.Drawing.Size(738, 20);
+            this.txtSendCommand.TabIndex = 2;
+            this.txtSendCommand.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtSendCommand_KeyUp);
+            // 
+            // chkShowBinaryMessages
+            // 
+            this.chkShowBinaryMessages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkShowBinaryMessages.AutoSize = true;
+            this.chkShowBinaryMessages.Location = new System.Drawing.Point(3, 166);
+            this.chkShowBinaryMessages.Name = "chkShowBinaryMessages";
+            this.chkShowBinaryMessages.Size = new System.Drawing.Size(85, 17);
+            this.chkShowBinaryMessages.TabIndex = 3;
+            this.chkShowBinaryMessages.Text = "Show Binary";
+            this.chkShowBinaryMessages.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(962, 450);
+            this.ClientSize = new System.Drawing.Size(962, 579);
+            this.Controls.Add(this.splitContainer2);
             this.Controls.Add(this.btnSendFile);
             this.Controls.Add(this.btnCopyFilesTo);
             this.Controls.Add(this.cbUSB);
             this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.txtIP);
             this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnRefresh);
@@ -344,6 +418,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ctxPrinter.ResumeLayout(false);
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -378,6 +457,11 @@
         private System.Windows.Forms.Button btnCopyFilesTo;
         private System.Windows.Forms.Button btnSendFile;
         private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.TextBox txtSendCommand;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtHistory;
+        private System.Windows.Forms.CheckBox chkShowBinaryMessages;
     }
 }
 

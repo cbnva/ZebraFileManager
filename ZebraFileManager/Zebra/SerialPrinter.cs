@@ -18,6 +18,11 @@ namespace ZebraFileManager.Zebra
 
         SerialPortStream port;
 
+        public SerialPrinter() : base()
+        {
+
+        }
+
         public override bool Connect()
         {
             if (Connected != true)
@@ -28,14 +33,14 @@ namespace ZebraFileManager.Zebra
             return Connected;
         }
 
-        public override string RunCommand(string command, bool response = true)
+        protected override string RunCommandInternal(string command, bool response = true)
         {
-            return Encoding.UTF8.GetString(RunCommand(Encoding.UTF8.GetBytes(command), response));
+            return Encoding.UTF8.GetString(RunCommandInternal(Encoding.UTF8.GetBytes(command), response));
         }
 
         object commandLock = new object();
 
-        public override byte[] RunCommand(byte[] command, bool response = true)
+        protected override byte[] RunCommandInternal(byte[] command, bool response = true)
         {
 
             if (!Connected)

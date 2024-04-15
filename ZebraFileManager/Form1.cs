@@ -14,12 +14,16 @@ using File = ZebraFileManager.Zebra.File;
 using Microsoft.Win32;
 using RJCP.IO.Ports;
 using System.Text.RegularExpressions;
+using System.Collections.Specialized;
 
 namespace ZebraFileManager
 {
     public partial class Form1 : Form
     {
         private ListViewColumnSorter lvwColumnSorter;
+        private Dictionary<Printer, StringBuilder> messageLogWithoutBinary = new Dictionary<Printer, StringBuilder>();
+        private Dictionary<Printer, StringBuilder> messageLogWithBinary = new Dictionary<Printer, StringBuilder>();
+
         public Form1()
         {
             InitializeComponent();
@@ -106,15 +110,106 @@ namespace ZebraFileManager
             return ports;
         }
 
+        Printer CurrentPrinter
+        {
+            get
+            {
+                return treeView1.SelectedNode?.Tag as Printer ?? treeView1.SelectedNode?.Parent?.Tag as Printer;
+            }
+        }
+        Drive CurrentDrive
+        {
+            get
+            {
+                return treeView1.SelectedNode?.Tag as Drive;
+            }
+        }
+
         private void btnAddPrinterByIP_Click(object sender, EventArgs e)
         {
             var p = new IPPrinter();
+            StartMonitoringPrinterMessages(p);
             p.Host = txtIP.Text;
+
             var node = new TreeNode(p.Host);
             node.Tag = p;
             treeView1.Nodes.Add(node);
             treeView1.SelectedNode = node;
             BeginRefreshPrinterNode(node);
+        }
+
+        Dictionary<Printer, NotifyCollectionChangedEventHandler> messageEventHandlers = new Dictionary<Printer, NotifyCollectionChangedEventHandler>();
+
+        void StartMonitoringPrinterMessages(Printer p)
+        {
+            var handler = new NotifyCollectionChangedEventHandler((sender, e) =>
+            {
+                PrinterMessageCollectionChanged(p, e);
+            });
+            p.Messages.CollectionChanged += handler;
+            messageEventHandlers[p] = handler;
+        }
+
+        void StopMonitoringPrinterMessages(Printer p)
+        {
+            if (messageEventHandlers.ContainsKey(p))
+                p.Messages.CollectionChanged -= messageEventHandlers[p];
+        }
+
+        void PrinterMessageCollectionChanged(Printer p, NotifyCollectionChangedEventArgs e)
+        {
+            // Adding is the only one we expect.
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                if (!messageLogWithBinary.ContainsKey(p))
+                    messageLogWithBinary[p] = new StringBuilder();
+                if (!messageLogWithoutBinary.ContainsKey(p))
+                    messageLogWithoutBinary[p] = new StringBuilder();
+
+                foreach (PrinterMessage item in e.NewItems)
+                {
+                    if (item.IsBinaryString)
+                    {
+                        messageLogWithBinary[p].Append($"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} Binary Message ({item.ByteContents.Length} bytes)\r\n{item.StringContents}\r\n\r\n");
+                        messageLogWithoutBinary[p].Append($"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} Binary Message ({item.ByteContents.Length} bytes)\r\n\r\n");
+
+                    }
+                    else
+                    {
+                        var log = $"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} String Message {item.StringContents.Length} chars\r\n{item.StringContents}\r\n\r\n";
+                        messageLogWithBinary[p].Append(log);
+                        messageLogWithoutBinary[p].Append(log);
+
+                    }
+                }
+
+                RefreshMessageLog();
+            }
+        }
+
+        void RefreshMessageLog()
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(RefreshMessageLog));
+                return;
+            }
+
+
+            var printer = CurrentPrinter;
+
+            if (printer != null)
+            {
+                if (chkShowBinaryMessages.Checked && messageLogWithBinary.ContainsKey(printer))
+                    txtHistory.Text = messageLogWithBinary[CurrentPrinter].ToString();
+                else if (messageLogWithoutBinary.ContainsKey(printer))
+                    txtHistory.Text = messageLogWithBinary[CurrentPrinter].ToString();
+                else
+                    txtHistory.Text = "{No History}";
+
+                txtHistory.Select(txtHistory.TextLength, 0);
+                txtHistory.ScrollToCaret();
+            }
         }
 
         void BeginRefreshPrinterNode(TreeNode node, string drive = null)
@@ -196,6 +291,8 @@ namespace ZebraFileManager
                 }
                 listView1.EndUpdate();
             }
+
+            RefreshMessageLog();
         }
 
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -323,7 +420,7 @@ namespace ZebraFileManager
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            var printer = treeView1.SelectedNode?.Tag as Printer ?? treeView1.SelectedNode?.Parent?.Tag as Printer;
+            var printer = CurrentPrinter;
 
             if (printer != null)
             {
@@ -339,6 +436,7 @@ namespace ZebraFileManager
             {
 
                 var p = new SerialPrinter();
+                StartMonitoringPrinterMessages(p);
                 p.ComPort = port.Port;
                 var node = new TreeNode(port.Description);
                 node.Tag = p;
@@ -364,6 +462,7 @@ namespace ZebraFileManager
         private void btnAddUSBPrinter_Click(object sender, EventArgs e)
         {
             var p = new USBPrinter();
+            StartMonitoringPrinterMessages(p);
             p.PrinterName = cbUSB.SelectedItem as string;
             var node = new TreeNode(p.PrinterName);
             node.Tag = p;
@@ -453,8 +552,12 @@ namespace ZebraFileManager
 
         private void btnSendFile_Click(object sender, EventArgs e)
         {
-            Printer p = treeView1.SelectedNode.Tag as Printer;
-            if (p == null)
+            Printer p;
+            if (treeView1.SelectedNode.Tag is Printer)
+                p = treeView1.SelectedNode.Tag as Printer;
+            else if (treeView1.SelectedNode.Parent?.Tag is Printer)
+                p = treeView1.SelectedNode.Parent.Tag as Printer;
+            else
                 return;
 
             var fd = new OpenFileDialog()
@@ -478,6 +581,18 @@ namespace ZebraFileManager
             if (printer != null)
             {
                 printer.RestartPrinter();
+            }
+        }
+
+        private void txtSendCommand_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyData == Keys.Enter)
+            {
+                var printer = CurrentPrinter;
+                if(printer != null)
+                {
+                    printer.RunCommand(txtSendCommand.Text + "\r\n");
+                }
             }
         }
     }

@@ -23,15 +23,19 @@ namespace ZebraFileManager.Zebra
 
         public override bool Connected => true;
 
+        public USBPrinter() : base()
+        {
+
+        }
 
         public override bool Connect()
         {
             return Connected;
         }
 
-        public override string RunCommand(string command, bool response = true)
+        protected override string RunCommandInternal(string command, bool response = true)
         {
-            var result = RunCommand(Encoding.UTF8.GetBytes(command), response);
+            var result = RunCommandInternal(Encoding.UTF8.GetBytes(command), response);
             if (result != null)
                 return Encoding.UTF8.GetString(result);
             return null;
@@ -39,7 +43,7 @@ namespace ZebraFileManager.Zebra
 
         static Dictionary<string, object> LockObjects = new Dictionary<string, object>();
 
-        public override byte[] RunCommand(byte[] command, bool response = true)
+        protected override byte[] RunCommandInternal(byte[] command, bool response = true)
         {
 
             if (!Connected)
