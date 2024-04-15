@@ -330,9 +330,10 @@ namespace ZebraFileManager.Zebra
             {
                 // Try Name, Caption and/or Description (they seem to be same most of the time).
                 string Name = (string)device.GetPropertyValue("Name");
+                string Service = (string)device.GetPropertyValue("Service");
 
                 // >>>>>>>>>>>>>>>>>>>> Query String ...
-                if (Name == "USB Printing Support")
+                if (Name == "USB Printing Support" || Service?.ToLower() =="usbprint")
                 {
                     try
                     {
