@@ -62,38 +62,41 @@ namespace ZebraFileManager
             var regex = new Regex(@"^[a-fA-F0-9]&[a-fA-F0-9]{7,8}&[a-fA-F0-9]&(?<MAC>[a-fA-F0-9]{12})_[a-fA-F0-9]+$", RegexOptions.Compiled);
             using (var bthenum = Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Enum\\BTHENUM"))
             {
-                var keynames = bthenum.GetSubKeyNames();
-                foreach (var btDeviceName in keynames.Where(x => x.StartsWith("{00001101-0000-1000-8000-00805f9b34fb}")))
+                if (bthenum != null)
                 {
-                    using (var btDevKey = bthenum.OpenSubKey(btDeviceName)) // BTHENUM\{GUID}*
+                    var keynames = bthenum.GetSubKeyNames();
+                    foreach (var btDeviceName in keynames.Where(x => x.StartsWith("{00001101-0000-1000-8000-00805f9b34fb}")))
                     {
-                        foreach (var subkeyName in btDevKey.GetSubKeyNames().Where(x => regex.IsMatch(x) && keynames.Contains($"Dev_{regex.Match(x).Groups["MAC"].Value}")))
+                        using (var btDevKey = bthenum.OpenSubKey(btDeviceName)) // BTHENUM\{GUID}*
                         {
-                            using (var devParam = btDevKey.OpenSubKey(subkeyName + "\\Device Parameters")) // BTHENUM\{GUID}*\aeouaoeu\Device Parameters
+                            foreach (var subkeyName in btDevKey.GetSubKeyNames().Where(x => regex.IsMatch(x) && keynames.Contains($"Dev_{regex.Match(x).Groups["MAC"].Value}")))
                             {
-                                var portName = devParam.GetValue("PortName") as string;
-
-                                if (string.IsNullOrEmpty(portName))
-                                    continue;
-
-                                var mac = regex.Match(subkeyName).Groups["MAC"].Value;
-                                using (var rawDevKey = bthenum.OpenSubKey($"Dev_{mac}"))
+                                using (var devParam = btDevKey.OpenSubKey(subkeyName + "\\Device Parameters")) // BTHENUM\{GUID}*\aeouaoeu\Device Parameters
                                 {
-                                    var name = rawDevKey.GetSubKeyNames().Where(x => x.ToUpper().EndsWith(mac.ToUpper())).FirstOrDefault();
-                                    if (!string.IsNullOrEmpty(name))
+                                    var portName = devParam.GetValue("PortName") as string;
+
+                                    if (string.IsNullOrEmpty(portName))
+                                        continue;
+
+                                    var mac = regex.Match(subkeyName).Groups["MAC"].Value;
+                                    using (var rawDevKey = bthenum.OpenSubKey($"Dev_{mac}"))
                                     {
-                                        using (var rawDevSubKey = rawDevKey.OpenSubKey(name))
+                                        var name = rawDevKey.GetSubKeyNames().Where(x => x.ToUpper().EndsWith(mac.ToUpper())).FirstOrDefault();
+                                        if (!string.IsNullOrEmpty(name))
                                         {
-                                            var friendlyName = rawDevSubKey.GetValue("FriendlyName") as string;
-                                            if (!string.IsNullOrEmpty(friendlyName))
+                                            using (var rawDevSubKey = rawDevKey.OpenSubKey(name))
                                             {
-                                                ports.Add(new PortDescription(portName, $"{portName} - {friendlyName} - {mac}"));
+                                                var friendlyName = rawDevSubKey.GetValue("FriendlyName") as string;
+                                                if (!string.IsNullOrEmpty(friendlyName))
+                                                {
+                                                    ports.Add(new PortDescription(portName, $"{portName} - {friendlyName} - {mac}"));
+                                                }
                                             }
                                         }
                                     }
+
+
                                 }
-
-
                             }
                         }
                     }
@@ -457,7 +460,7 @@ namespace ZebraFileManager
             var fd = new OpenFileDialog()
             {
             };
-            if((fd.ShowDialog() == DialogResult.OK) && System.IO.File.Exists(fd.FileName))
+            if ((fd.ShowDialog() == DialogResult.OK) && System.IO.File.Exists(fd.FileName))
             {
                 var contents = System.IO.File.ReadAllBytes(fd.FileName);
                 p.RunCommand(contents, false);
