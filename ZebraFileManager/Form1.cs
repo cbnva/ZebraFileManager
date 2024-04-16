@@ -508,6 +508,7 @@ namespace ZebraFileManager
                 return;
 
             var printer = ctxPrinter.Tag as Printer;
+            StopMonitoringPrinterMessages(printer);
             printer.Dispose();
             treeView1.Nodes.Remove(node);
 
@@ -589,10 +590,10 @@ namespace ZebraFileManager
 
         private void txtSendCommand_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.KeyData == Keys.Enter)
+            if (e.KeyData == Keys.Enter)
             {
                 var printer = CurrentPrinter;
-                if(printer != null)
+                if (printer != null)
                 {
                     printer.RunCommand(txtSendCommand.Text + "\r\n");
                 }
