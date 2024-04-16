@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using RJCP.IO.Ports;
 using System.Text.RegularExpressions;
 using System.Collections.Specialized;
+using Library.Forms;
 
 namespace ZebraFileManager
 {
@@ -114,6 +115,10 @@ namespace ZebraFileManager
         {
             get
             {
+                if (InvokeRequired)
+                {
+                    return (Printer)(Invoke(new Func<Printer>(() => CurrentPrinter)));
+                }
                 return treeView1.SelectedNode?.Tag as Printer ?? treeView1.SelectedNode?.Parent?.Tag as Printer;
             }
         }
@@ -423,13 +428,7 @@ namespace ZebraFileManager
 
         private void btnSettings_Click(object sender, EventArgs e)
         {
-            var printer = CurrentPrinter;
-
-            if (printer != null)
-            {
-                using (var frm = new frmSettings(printer))
-                    frm.ShowDialog();
-            }
+            MainContainer.Panel2Collapsed = !MainContainer.Panel2Collapsed;
         }
 
         private void btnAddBT_Click(object sender, EventArgs e)
@@ -599,5 +598,293 @@ namespace ZebraFileManager
                 }
             }
         }
+
+        #region PrinterSettings
+
+
+        Dictionary<Printer, SortableBindingList<Setting>> printerSettings = new Dictionary<Printer, SortableBindingList<Setting>>();
+        Dictionary<Printer, List<Setting>> changedPrinterSettings = new Dictionary<Printer, List<Setting>>();
+        Dictionary<Printer, ListChangedEventHandler> printerSettingsEventHandlers = new Dictionary<Printer, ListChangedEventHandler>();
+
+        private void BeginReloadSettings()
+        {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+            {
+                var printer = CurrentPrinter;
+                if (!printer.Connect())
+                {
+                    return;
+                }
+
+                // Reset cache for this printer
+                if (printerSettings.ContainsKey(printer) && printerSettingsEventHandlers.ContainsKey(printer))
+                {
+                    printerSettings[printer].ListChanged -= printerSettingsEventHandlers[printer];
+                }
+                if (changedPrinterSettings.ContainsKey(printer))
+                {
+                    changedPrinterSettings[printer].Clear();
+                    changedPrinterSettings.Remove(printer);
+                }
+
+
+                // Create the event handler and store it for when we need to remove it later.
+                printerSettingsEventHandlers[printer] = (sender, e) => Settings_ListChanged(printer, e);
+
+                // Retrieve the settings and attach our event handler
+                printerSettings[printer] = new SortableBindingList<Setting>(printer.GetSettings());
+                printerSettings[printer].ListChanged += printerSettingsEventHandlers[printer];
+
+                // Initialize the change tracking list for this printer.
+                changedPrinterSettings[printer] = new List<Setting>();
+
+                // If the user hasn't selected a different printer by now, refresh the list.
+                if (printer == CurrentPrinter)
+                    Invoke(new Action(() => { Filter(); btnSave.Text = $"Save ({changedPrinterSettings[CurrentPrinter].Count})"; }));
+
+            }));
+        }
+
+        private void Settings_ListChanged(Printer printer, ListChangedEventArgs e)
+        {
+            // Two qualifiers here:
+            // 1. Ensure the event comes from the currently selected printer. Wo want to ignore it otherwise
+            // 2. Ensure it's the Value property that's changed
+            if (CurrentPrinter == printer && e.ListChangedType == ListChangedType.ItemChanged && e.PropertyDescriptor.Name == "Value")
+            {
+
+                var setting = printerSettings[printer][e.OldIndex];
+                var changedSettings = changedPrinterSettings[printer];
+                if (!changedSettings.Contains(setting))
+                {
+                    changedSettings.Add(setting);
+                    Invoke(new Action(() => btnSave.Text = $"Save ({changedSettings.Count})"));
+                }
+            }
+        }
+
+        private void btnRefreshSettings_Click(object sender, EventArgs e)
+        {
+            BeginReloadSettings();
+        }
+
+        private void dataGridView1_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++)
+            {
+                var row = dataGridView1.Rows[i];
+
+                var setting = row.DataBoundItem as Setting;
+                if (setting != null)
+                {
+                    var oldCell = row.Cells[valueDataGridViewTextBoxColumn.Index];
+                    DataGridViewCell newCell = null;
+                    switch (setting.Type)
+                    {
+                        case SettingType.Enum:
+                            var range = setting.Range.Split(',').ToList();
+                            range.Insert(0, "");
+                            if (!range.Contains(setting.Value))
+                                range.Add(setting.Value);
+
+                            newCell = new DataGridViewComboBoxCell()
+                            {
+                                DataSource = range
+                            };
+                            break;
+                        case SettingType.Bool:
+                            newCell = new DataGridViewCheckBoxCell();
+                            break;
+                        case SettingType.Integer:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        case SettingType.IPV4_Address:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        case SettingType.Double:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                        default:
+                            newCell = new DataGridViewTextBoxCell();
+                            break;
+                    }
+                    if (newCell != null)
+                    {
+                        row.Cells[valueDataGridViewTextBoxColumn.Index] = newCell;
+                    }
+                    row.Cells[valueDataGridViewTextBoxColumn.Index].ReadOnly = setting.Access == SettingAccess.R;
+
+                }
+            }
+
+        }
+
+        private void btnSaveSettings_Click(object sender, EventArgs e)
+        {
+            var printer = CurrentPrinter;
+            if (printer == null)
+                return;
+            ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
+            {
+                foreach (var setting in changedPrinterSettings[printer])
+                {
+                    printer.SetSettingSGD(setting.Name, setting.Value);
+                }
+                changedPrinterSettings[printer].Clear();
+                Invoke(new Action(() => btnSave.Text = $"Save ({changedPrinterSettings[printer].Count})"));
+                BeginReloadSettings();
+            }));
+        }
+
+        private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.ColumnIndex == this.valueDataGridViewTextBoxColumn.Index && dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].IsInEditMode)
+            {
+                var setting = dataGridView1.Rows[e.RowIndex].DataBoundItem as Setting;
+                if (!setting.IsValidValue(e.FormattedValue))
+                {
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "Invalid Value";
+                    e.Cancel = true;
+                }
+                else
+                {
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "";
+                }
+
+            }
+        }
+
+        private void btnExportChangedAsZPL_Click(object sender, EventArgs e)
+        {
+            var printer = CurrentPrinter;
+            if (printer == null)
+                return;
+
+            if (changedPrinterSettings[printer].Count != 0)
+            {
+                var sb = new StringBuilder("! U ");
+                foreach (var item in changedPrinterSettings[printer])
+                {
+                    sb.AppendLine($"setvar \"{item.Name}\" \"{item.Value}\"");
+                }
+                sb.AppendLine("END ");
+
+                using (var fd = new SaveFileDialog())
+                {
+                    fd.Filter = ".zpl file (*.zpl)|*.zpl";
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.WriteAllText(fd.FileName, sb.ToString());
+                    }
+                }
+            }
+
+        }
+
+        private void btnExportNonDefaults_Click(object sender, EventArgs e)
+        {
+            var printer = CurrentPrinter;
+
+            if (printer == null)
+                return;
+
+            var nonDefaultSettings = changedPrinterSettings[printer].Where(x => x.Access == SettingAccess.RW && x.Value != x.Default).ToList();
+            if (nonDefaultSettings.Count != 0)
+            {
+                var sb = new StringBuilder("! U ");
+                foreach (var item in nonDefaultSettings)
+                {
+                    sb.AppendLine($"setvar \"{item.Name}\" \"{item.Value}\"");
+                }
+                sb.AppendLine("END ");
+
+                using (var fd = new SaveFileDialog())
+                {
+                    fd.Filter = ".zpl file (*.zpl)|*.zpl";
+                    if (fd.ShowDialog() == DialogResult.OK)
+                    {
+                        System.IO.File.WriteAllText(fd.FileName, sb.ToString());
+                    }
+                }
+            }
+
+        }
+
+
+        System.Threading.Timer filterTimer;
+        private void txtFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (filterTimer == null)
+                filterTimer = new System.Threading.Timer(x => Filter());
+            filterTimer.Change(500, Timeout.Infinite);
+        }
+        object filterLock = new object();
+        private void Filter()
+        {
+            var printer = CurrentPrinter;
+
+            if (printer == null)
+                return;
+
+            lock (filterLock)
+            {
+                var oldList = dataGridView1.DataSource as SortableBindingList<Setting>;
+                List<Setting> filteredList;
+
+                // Access Filter
+                SettingAccess? accessFilter = null;
+                if (chkFilterR.Checked)
+                    accessFilter = SettingAccess.R;
+                else if (chkFilterRW.Checked)
+                    accessFilter = SettingAccess.RW;
+                else if (chkFilterW.Checked)
+                    accessFilter = SettingAccess.W;
+
+                if (accessFilter != null)
+                    filteredList = printerSettings[printer].Where(x => x.Access == accessFilter.Value).ToList();
+                else
+                    filteredList = new List<Setting>(printerSettings[printer]);
+
+                // Name filter
+                if (!string.IsNullOrWhiteSpace(txtFilter.Text))
+                    filteredList = filteredList.Where(x => x.Name.ToLower().Contains(txtFilter.Text.ToLower())).ToList();
+
+
+                // Assign the new list to the DataGridView
+                var filtered = new SortableBindingList<Setting>(filteredList);
+                if (oldList != null)
+                    filtered.CopySortingFrom(oldList);
+
+                Invoke(new Action<SortableBindingList<Setting>>(x => dataGridView1.DataSource = x), filtered);
+
+            }
+        }
+
+        bool chkChanging;
+        private void chkFilter_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkChanging && sender is CheckBox)
+            {
+                chkChanging = true;
+
+                var checkbox = sender as CheckBox;
+                if (checkbox.Checked) // This box was checked. Need to ensure the others are unchecked
+                {
+                    var list = new List<CheckBox> { chkFilterR, chkFilterRW, chkFilterW };
+                    list.Remove(checkbox);
+                    foreach (var item in list)
+                        item.Checked = false;
+                }
+                // else {} No need to handle anything if it was unchecked
+
+                if (filterTimer == null)
+                    filterTimer = new System.Threading.Timer(x => Filter());
+                filterTimer.Change(50, Timeout.Infinite);
+
+                chkChanging = false;
+            }
+        }
+
+        #endregion
     }
 }
