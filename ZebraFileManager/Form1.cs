@@ -369,13 +369,16 @@ namespace ZebraFileManager
                 var printer = treeView1.SelectedNode.Parent.Tag as Printer;
                 // User dropped a file (or multiple)
                 var filenames = e.Data.GetData("FileDrop") as string[];
-                foreach (var file in filenames)
+                if (filenames != null)
                 {
-                    var targetName = $"{drive.Letter}:{Path.GetFileName(file)}";
-                    printer.SetFileContents(targetName, System.IO.File.ReadAllBytes(file));
+                    foreach (var file in filenames)
+                    {
+                        var targetName = $"{drive.Letter}:{Path.GetFileName(file)}";
+                        printer.SetFileContents(targetName, System.IO.File.ReadAllBytes(file));
 
+                    }
+                    BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, drive.Letter);
                 }
-                BeginRefreshPrinterNode(treeView1.SelectedNode.Parent, drive.Letter);
             }
         }
 
