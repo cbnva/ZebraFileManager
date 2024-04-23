@@ -26,6 +26,8 @@ namespace ZebraFileManager.Zebra
                     try
                     {
                         stringContents = Encoding.UTF8.GetString(ByteContents);
+                        if (stringContents.Contains('\0')) // Presence of byte zero indicates binary content.
+                            throw new Exception("contains binary");
                         IsBinaryString = false;
                     }
                     catch
