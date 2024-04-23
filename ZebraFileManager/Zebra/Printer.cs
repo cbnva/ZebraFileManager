@@ -148,7 +148,11 @@ namespace ZebraFileManager.Zebra
             if (response)
             {
                 if (result != null)
-                    Messages.Add(new PrinterMessage { StringContents = result, Direction = PrinterMessageType.Receive });
+                {
+                    if (result.Contains("\n") && !result.Contains("\r\n"))
+                        result = result.Replace("\n", "\r\n");
+                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = result, Direction = PrinterMessageType.Receive });
+                }
                 else
                     Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
             }
