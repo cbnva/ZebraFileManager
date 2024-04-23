@@ -121,7 +121,7 @@ namespace ZebraFileManager.Zebra
                                     }
                                     break;
                                 }
-                                timeout = 500;
+                                timeout = 1000;
 
                             }
 
