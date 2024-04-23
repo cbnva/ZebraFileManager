@@ -160,7 +160,14 @@ namespace ZebraFileManager.Zebra
         }
         public virtual byte[] RunCommand(byte[] command, bool response = true)
         {
-            Messages.Add(new PrinterMessage { ByteContents = command, Direction = PrinterMessageType.Send });
+            if (command.Length > 100000)
+            {
+                Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = $"Byte Command: {command.Length} bytes", Direction = PrinterMessageType.Send });
+            }
+            else
+            {
+                Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, ByteContents = command, Direction = PrinterMessageType.Send });
+            }
             var result = RunCommandInternal(command, response);
             if (response)
             {
