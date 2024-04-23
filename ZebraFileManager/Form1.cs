@@ -173,15 +173,16 @@ namespace ZebraFileManager
 
                 foreach (PrinterMessage item in e.NewItems)
                 {
+                    var stringContents = item.StringContents;
                     if (item.IsBinaryString)
                     {
-                        messageLogWithBinary[p].Append($"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} Binary Message ({item.ByteContents.Length} bytes)\r\n{item.StringContents}\r\n\r\n");
+                        messageLogWithBinary[p].Append($"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} Binary Message ({item.ByteContents.Length} bytes)\r\n{stringContents}\r\n\r\n");
                         messageLogWithoutBinary[p].Append($"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} Binary Message ({item.ByteContents.Length} bytes)\r\n\r\n");
 
                     }
                     else
                     {
-                        var log = $"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} String Message {item.StringContents.Length} chars\r\n{item.StringContents}\r\n\r\n";
+                        var log = $"{item.TimeGenerated.ToString("yyyy-MM-dd HH:mm:ss")} {item.Direction} String Message {item.StringContents.Length} chars\r\n{stringContents}\r\n\r\n";
                         messageLogWithBinary[p].Append(log);
                         messageLogWithoutBinary[p].Append(log);
 
@@ -610,37 +611,44 @@ namespace ZebraFileManager
         {
             ThreadPool.QueueUserWorkItem(new WaitCallback(x =>
             {
-                var printer = CurrentPrinter;
-                if (!printer.Connect())
+                try
                 {
-                    return;
-                }
+                    var printer = CurrentPrinter;
+                    if (!printer.Connect())
+                    {
+                        return;
+                    }
 
-                // Reset cache for this printer
-                if (printerSettings.ContainsKey(printer) && printerSettingsEventHandlers.ContainsKey(printer))
+                    // Reset cache for this printer
+                    if (printerSettings.ContainsKey(printer) && printerSettingsEventHandlers.ContainsKey(printer))
+                    {
+                        printerSettings[printer].ListChanged -= printerSettingsEventHandlers[printer];
+                    }
+                    if (changedPrinterSettings.ContainsKey(printer))
+                    {
+                        changedPrinterSettings[printer].Clear();
+                        changedPrinterSettings.Remove(printer);
+                    }
+
+
+                    // Create the event handler and store it for when we need to remove it later.
+                    printerSettingsEventHandlers[printer] = (sender, e) => Settings_ListChanged(printer, e);
+
+                    // Retrieve the settings and attach our event handler
+                    printerSettings[printer] = new SortableBindingList<Setting>(printer.GetSettings());
+                    printerSettings[printer].ListChanged += printerSettingsEventHandlers[printer];
+
+                    // Initialize the change tracking list for this printer.
+                    changedPrinterSettings[printer] = new List<Setting>();
+
+                    // If the user hasn't selected a different printer by now, refresh the list.
+                    if (printer == CurrentPrinter)
+                        Invoke(new Action(() => { Filter(); btnSave.Text = $"Save ({changedPrinterSettings[CurrentPrinter].Count})"; }));
+                }
+                catch (Exception ex)
                 {
-                    printerSettings[printer].ListChanged -= printerSettingsEventHandlers[printer];
+                    MessageBox.Show($"Error loading settings: {ex.Message}");
                 }
-                if (changedPrinterSettings.ContainsKey(printer))
-                {
-                    changedPrinterSettings[printer].Clear();
-                    changedPrinterSettings.Remove(printer);
-                }
-
-
-                // Create the event handler and store it for when we need to remove it later.
-                printerSettingsEventHandlers[printer] = (sender, e) => Settings_ListChanged(printer, e);
-
-                // Retrieve the settings and attach our event handler
-                printerSettings[printer] = new SortableBindingList<Setting>(printer.GetSettings());
-                printerSettings[printer].ListChanged += printerSettingsEventHandlers[printer];
-
-                // Initialize the change tracking list for this printer.
-                changedPrinterSettings[printer] = new List<Setting>();
-
-                // If the user hasn't selected a different printer by now, refresh the list.
-                if (printer == CurrentPrinter)
-                    Invoke(new Action(() => { Filter(); btnSave.Text = $"Save ({changedPrinterSettings[CurrentPrinter].Count})"; }));
 
             }));
         }
