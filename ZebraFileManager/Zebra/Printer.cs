@@ -143,14 +143,14 @@ namespace ZebraFileManager.Zebra
 
         public virtual string RunCommand(string command, bool response = true)
         {
-            Messages.Add(new PrinterMessage { StringContents = command, Direction = PrinterMessageType.Send });
+            Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = command, Direction = PrinterMessageType.Send });
             var result = RunCommandInternal(command, response);
             if (response)
             {
                 if (result != null)
                     Messages.Add(new PrinterMessage { StringContents = result, Direction = PrinterMessageType.Receive });
                 else
-                    Messages.Add(new PrinterMessage { StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
+                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
             }
             return result;
         }
@@ -161,9 +161,9 @@ namespace ZebraFileManager.Zebra
             if (response)
             {
                 if (result != null)
-                    Messages.Add(new PrinterMessage { ByteContents = result, Direction = PrinterMessageType.Receive });
+                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, ByteContents = result, Direction = PrinterMessageType.Receive });
                 else
-                    Messages.Add(new PrinterMessage { StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
+                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
             }
             return result;
         }
