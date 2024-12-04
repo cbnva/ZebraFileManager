@@ -144,19 +144,26 @@ namespace ZebraFileManager.Zebra
         public virtual string RunCommand(string command, bool response = true)
         {
             Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = command, Direction = PrinterMessageType.Send });
-            var result = RunCommandInternal(command, response);
-            if (response)
+            try
             {
-                if (result != null)
+                var result = RunCommandInternal(command, response);
+                if (response)
                 {
-                    if (result.Contains("\n") && !result.Contains("\r\n"))
-                        result = result.Replace("\n", "\r\n");
-                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = result, Direction = PrinterMessageType.Receive });
+                    if (result != null)
+                    {
+                        if (result.Contains("\n") && !result.Contains("\r\n"))
+                            result = result.Replace("\n", "\r\n");
+                        Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = result, Direction = PrinterMessageType.Receive });
+                    }
+                    else
+                        Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
                 }
-                else
-                    Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = "{NULL}", Direction = PrinterMessageType.Receive });
-            }
-            return result;
+                return result;
+            } catch(Exception ex)
+			{
+                Messages.Add(new PrinterMessage { TimeGenerated = DateTime.Now, StringContents = ex.ToString(), Direction = PrinterMessageType.Receive });
+                return "";
+			}
         }
         public virtual byte[] RunCommand(byte[] command, bool response = true)
         {
