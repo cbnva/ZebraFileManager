@@ -707,6 +707,7 @@ namespace ZebraFileManager
                             newCell = new DataGridViewTextBoxCell();
                             break;
                         case SettingType.IPV4_Address:
+                        case SettingType.IPV6_Address:
                             newCell = new DataGridViewTextBoxCell();
                             break;
                         case SettingType.Double:

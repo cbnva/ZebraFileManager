@@ -81,6 +81,7 @@ namespace ZebraFileManager.Zebra
                         }
                         break;
                     case SettingType.IPV4_Address:
+                    case SettingType.IPV6_Address:
                         if (value is string)
                         {
                             Value = value as string;
@@ -153,6 +154,7 @@ namespace ZebraFileManager.Zebra
                     return false;
 
                 case SettingType.IPV4_Address:
+                case SettingType.IPV6_Address:
                     return (value is string || value is System.Net.IPAddress);
 
                 case SettingType.Double:
@@ -251,6 +253,8 @@ namespace ZebraFileManager.Zebra
         Integer,
         [EnumMember(Value = "ipv4-address")]
         IPV4_Address,
+        [EnumMember(Value = "ipv6-address")]
+        IPV6_Address,
         [EnumMember(Value = "double")]
         Double,
         [EnumMember(Value = "json")]
